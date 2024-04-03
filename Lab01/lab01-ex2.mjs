@@ -30,7 +30,6 @@ function FilmLibrary() {
             this.filmsList.push(film)
         }
     }
-
     this.sortByDate = () => {
         let newList = [...this.filmsList];
         return newList.sort((a, b) => {
@@ -47,24 +46,19 @@ function FilmLibrary() {
 
         })
     }
-
     this.deleteFilm = (id) => {
         // let index = this.filmsList.findIndex(f => f.id === dId)
         // index != -1 ? this.filmsList.splice(index, 1) : console.log('Not Found!');
 
         this.filmsList = this.filmsList.filter((f) => f.id !== id)
     }
-
     this.resetWatchedFilms = () => {
         this.filmsList.forEach((f) => delete f.watchDate)
     }
-
     this.getRated = () => {
         return this.filmsList.filter(f => f.score > 0).sort((a, b) => b.score - a.score)
     }
 }
-
-
 
 function main() {
     const pulpFiction = new Film(1, "Pulp Fiction", true, "2024-03-10", 5);

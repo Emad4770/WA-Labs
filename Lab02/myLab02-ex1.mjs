@@ -1,20 +1,32 @@
-import { log } from 'console';
 import sqlit from 'sqlite3';
+import dayjs from 'dayjs'
+import Film from './Film.mjs';
+import FilmLibrary from './FilmLibrary.mjs';
 
-const db = new sqlit.Database('films.db', (err) => { if (err) throw err });
-let result = []
-db.all('SELECT * FROM users', (err, rows) => {
 
-    if (err)
-        throw err
-    // console.log(rows)
-    // rows.forEach(r => { console.log(r.name); })
 
-    for (let row of rows) {
-        result.push(row)
+function FilmLibrary() {
+
+    this.getFilms = () => {
+
+        const sql = ``
+        return new Promise((resolve, reject) => {
+            db.all(sql, (err, rows) => {
+
+                if (err) throw err
+                else
+                    resolve(mapRowToFilm(rows))
+            })
+        })
+
+
     }
-})
 
-for (let row of result) {
-    console.log(row);
+
 }
+
+
+
+
+const Library = new FilmLibrary();
+Library.getFilms().then((rows) => { console.log(rows); })
