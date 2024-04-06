@@ -12,7 +12,15 @@ export default function FilmLibrary() {
     const db = new sqlit.Database('films.db', (err) => {
         if (err) throw err
     })
+    this.closeDB = () => {
+        try {
+            db.close()
+        } catch (error) {
+            console.error(`Impossible to colse the database! ${error}`);
+        }
 
+
+    }
     this.getAll = () => {
         const sql = `SELECT * FROM films`
         return new Promise((resolve, reject) => {
@@ -79,59 +87,74 @@ export default function FilmLibrary() {
         })
     }
 
+    /*   Part 2 */
 
-
-
-
-
-
-    /*   Exercise 2 */
-
-    this.filmsList = []
     this.addNewFilm = (film) => {
 
-        if (this.filmsList.some((f) => film.id == f.id)) {
-            throw new Error(`Duplcate ID`)
-        }
-        else {
-            this.filmsList.push(film)
-        }
-    }
-    this.sortByDate = () => {
-        let newList = [...this.filmsList];
-        return newList.sort((a, b) => {
+        const sql = `INSERT INTO films (title,isFavorite,watchDate,rating,userId)
+        values (?, ?, ?, ?, ?)`
+        const watchDate = film.watchDate ? film.watchDate.format("YYYY-MM-DD") : null
+        let rating = undefined;
 
-            if (a.watchDate == null)
-                return 1;
-            else if (b.watchDate == null)
-                return -1;
-            else if (a.watchDate.isAfter(b.watchDate))
-                return 1;
-            else if (a.watchDate.isBefore(b.watchDate))
-                return -1;
-            else return 0;
+        if (film.score >= 1 && film.score <= 5) {
+            rating = film.score
+        } else {
+            rating = null
+        }
 
+        return new Promise((resolve, reject) => {
+            db.run(sql, [film.title, film.favorite ? 1 : 0, watchDate, rating, film.userId], function (err) {
+                if (err)
+                    reject(err)
+                else
+                    film.id = this.lastID
+                resolve(film)
+            })
         })
+
     }
     this.deleteFilm = (id) => {
-        // let index = this.filmsList.findIndex(f => f.id === dId)
-        // index != -1 ? this.filmsList.splice(index, 1) : console.log('Not Found!');
 
-        this.filmsList = this.filmsList.filter((f) => f.id !== id)
+        const sql = `DELETE FROM films 
+        WHERE id = ?`
+
+        return new Promise((resolve, reject) => {
+            db.run(sql, [id], (err) => {
+                if (err)
+                    reject(err)
+                else
+                    resolve(true)
+            })
+        })
     }
+
     this.resetWatchedFilms = () => {
-        this.filmsList.forEach((f) => delete f.watchDate)
-    }
-    this.getRated = () => {
-        return this.filmsList.filter(f => f.score > 0).sort((a, b) => b.score - a.score)
+
+        const sql = `UPDATE films 
+        set watchDate = NULL`
+
+        return new Promise((resolve, reject) => {
+            db.run(sql, (err) => {
+                if (err)
+                    reject(err)
+                else
+                    resolve(true)
+            })
+        })
     }
 }
 
 
-const library = new FilmLibrary()
+// const library = new FilmLibrary()
+// const film1 = new Film(4, "Spider Man 3", true, null, 0, 1)
 // library.getAll().then((rows) => { console.log(rows); })
 // library.getFavs().then((rows) => { console.log(rows); })
 // library.getWatchedToday().then((rows) => { console.log(rows); })
 // library.getEarlier('2024-03-18').then((rows) => { console.log(rows); })
 // library.getHigherScore(4.5).then((rows) => { console.log(rows); })
-library.getContainsString('2').then((rows) => { console.log(rows); })
+// library.getContainsString('2').then((rows) => { console.log(rows); })
+// library.resetWatchedFilms().then()
+// library.addNewFilm(film1).then()
+// library.deleteFilm(11).then()
+
+
