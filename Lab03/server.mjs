@@ -1,11 +1,12 @@
 import express from 'express'
 import morgan from 'morgan';
-import { getAllFilms } from './dao.mjs'
+import { closeDB, getAllFilms, getFavoriteFilms } from './dao.mjs'
 const app = express();
 
 app.use(morgan('common'))
 app.use(express.json())
 
+// Get a list of all films
 app.get('/films', (req, res) => {
     getAllFilms().then((f) => {
         if (!f.error) {
@@ -19,6 +20,14 @@ app.get('/films', (req, res) => {
         }
     })
 })
+
+// Get all the favorite films
+app.get('/films/favorites', (req, res) => {
+    getFavoriteFilms().then((f) => {
+        res.json(f)
+    })
+})
+
 
 
 app.listen(3000, () => {
