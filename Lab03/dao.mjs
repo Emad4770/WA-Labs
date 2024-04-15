@@ -101,6 +101,25 @@ export function getUnseenFilms() {
     })
 }
 
+export function getFilm(id) {
+    return new Promise((resolve, reject) => {
+        const sql = `SELECT * FROM films
+        WHERE id = ?`
+        db.get(sql, [id], (err, row) => {
+            if (err)
+                reject(err)
+            else if (row === undefined) {
+                resolve({ error: "No films found with this id, try again!" })
+            }
+            else {
+                resolve(new Film(row.id, row.title, row.isFavorite, row.watchDate, row.rating, row.userId))
+            }
+        })
+    })
+}
+
+
+
 export function closeDB() {
     db.close()
 }
