@@ -84,6 +84,23 @@ export function getLatestFilms(currentDate, lastMonth) {
     })
 }
 
+export function getUnseenFilms() {
+    return new Promise((resolve, reject) => {
+        const sql = `SELECT * FROM films
+        WHERE watchDate IS NULL`
+        db.all(sql, (err, rows) => {
+            if (err)
+                reject(err)
+            else if (rows.length == 0) {
+                resolve({ error: "No unseen films found!" })
+            }
+            else {
+                resolve(rowsToFilm(rows))
+            }
+        })
+    })
+}
+
 export function closeDB() {
     db.close()
 }

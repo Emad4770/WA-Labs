@@ -1,6 +1,6 @@
 import express from 'express'
 import morgan from 'morgan';
-import { closeDB, getAllFilms, getFavoriteFilms, getLatestFilms, getTopRated } from './dao.mjs'
+import { closeDB, getAllFilms, getFavoriteFilms, getLatestFilms, getTopRated, getUnseenFilms } from './dao.mjs'
 import dayjs from 'dayjs';
 
 const app = express();
@@ -53,6 +53,18 @@ app.get('/films/lastmonth', (req, res) => {
         res.status(500).json({ error: err.message })
     })
 })
+
+// Get all unseen films
+app.get('/films/unseen', (req, res) => {
+    getUnseenFilms().then((f) => {
+        res.json(f)
+    }).catch((err) => {
+        res.status(500).json({ error: err.message })
+    })
+
+})
+
+
 
 
 
