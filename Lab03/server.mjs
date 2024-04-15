@@ -1,7 +1,8 @@
 import express from 'express'
 import morgan from 'morgan';
-import { closeDB, getAllFilms, getFavoriteFilms, getFilm, getLatestFilms, getTopRated, getUnseenFilms } from './dao.mjs'
+import { addNewFilm, closeDB, getAllFilms, getFavoriteFilms, getFilm, getLatestFilms, getTopRated, getUnseenFilms } from './dao.mjs'
 import dayjs from 'dayjs';
+import Film from './Film.mjs'
 import { check, validationResult } from 'express-validator';
 
 const app = express();
@@ -75,7 +76,17 @@ app.get('/films/:id', (req, res) => {
 
 // Create a new film
 app.post('/films', (req, res) => {
-
+    const title = req.body.title
+    const isFavorite = req.body.isFavorite
+    const watchDate = req.body.watchDate
+    const rating = req.body.rating
+    const userId = req.body.userId
+    const newFilm = new Film(1, title, isFavorite, watchDate, rating, userId)
+    addNewFilm(newFilm).then((f) => {
+        res.json(f)
+    }).catch((err) => {
+        res.status(500).json({ error: err.message })
+    })
 })
 
 

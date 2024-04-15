@@ -1,3 +1,4 @@
+import dayjs from "dayjs";
 import Film from "./Film.mjs";
 import sqlite from 'sqlite3'
 
@@ -118,6 +119,20 @@ export function getFilm(id) {
     })
 }
 
+export function addNewFilm(newFilm) {
+
+    return new Promise((resolve, reject) => {
+        const sql = `INSERT INTO films(title,isFavorite,rating,watchDate,userId)
+        VALUES (?,?,?,DATE(?),?)`
+        db.run(sql, [newFilm.title, newFilm.favorite ? 1 : 0, newFilm.score, newFilm.watchDate.toISOString(), newFilm.userId], function (err) {
+            if (err)
+                reject(err)
+            else
+                resolve(new Film(this.lastID, newFilm.title, newFilm.isFavorite, newFilm.watchDate, newFilm.score, newFilm.userId))
+        })
+    })
+
+}
 
 
 export function closeDB() {
