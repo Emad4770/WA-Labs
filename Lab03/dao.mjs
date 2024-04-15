@@ -12,6 +12,9 @@ export function getAllFilms() {
         db.all(sql, (err, rows) => {
             if (err)
                 reject(err)
+            else if (rows.length == 0) {
+                resolve({ error: "There are no films in the database, try again later!" })
+            }
             else {
                 const fList = rows.map((row) => { return new Film(row.id, row.title) })
                 resolve(fList)

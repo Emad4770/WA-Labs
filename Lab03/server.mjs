@@ -8,10 +8,15 @@ app.use(express.json())
 
 app.get('/films', (req, res) => {
     getAllFilms().then((f) => {
-        const films = f.map(element => {
-            return { id: element.id, title: element.title }
-        });
-        res.json(films)
+        if (!f.error) {
+            const films = f.map(element => {
+                return { id: element.id, title: element.title }
+            });
+            res.json(films)
+        }
+        else {
+            res.json(f)
+        }
     })
 })
 
