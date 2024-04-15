@@ -1,6 +1,7 @@
 import express from 'express'
 import morgan from 'morgan';
-import { closeDB, getAllFilms, getFavoriteFilms } from './dao.mjs'
+import { closeDB, getAllFilms, getFavoriteFilms, getTopRated } from './dao.mjs'
+
 const app = express();
 
 app.use(morgan('common'))
@@ -27,6 +28,14 @@ app.get('/films/favorites', (req, res) => {
         res.json(f)
     })
 })
+
+// Get best rated films
+app.get('/films/tops', (req, res) => {
+    getTopRated().then((f) => {
+        res.json(f)
+    })
+})
+
 
 
 

@@ -40,7 +40,7 @@ err : no favorite films
 }
 
 # All the best films (i.e., those rated 5 out of 5).
-GET /films/best
+GET /films/tops
 list of movies rated 5/5
 response:
 [

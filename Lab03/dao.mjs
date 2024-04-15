@@ -6,6 +6,11 @@ const db = new sqlite.Database('films.db', (err) => {
         throw (err)
 })
 
+function rowsToFilm(rows) {
+    const films = rows.map((row) => { return new Film(row.id, row.title, row.isFavorite, row.watchDate, row.rating, row.userId) })
+    return films;
+}
+
 export function getAllFilms() {
     return new Promise((resolve, reject) => {
         const sql = `SELECT id, title FROM films`
@@ -16,7 +21,7 @@ export function getAllFilms() {
                 resolve({ error: "There are no films in the database, try again later!" })
             }
             else {
-                const fList = rows.map((row) => { return new Film(row.id, row.title) })
+                const fList = rowsToFilm(rows)
                 resolve(fList)
             }
         })
@@ -43,6 +48,25 @@ export function getFavoriteFilms() {
         })
     })
 }
+
+export function getTopRated() {
+    return new Promise((resolve, reject) => {
+        const sql = `SELECT id, title, isFavorite, watchDate, rating, userId FROM films
+        WHERE rating = 5`
+        db.all(sql, (err, rows) => {
+            if (err)
+                reject(err)
+            else if (rows.length == 0) {
+                resolve({ error: "No movies found!" })
+            }
+            else {
+                const films = rowsToFilm(rows)
+                resolve(films)
+            }
+        })
+    })
+}
+
 export function closeDB() {
     db.close()
 }
