@@ -1,6 +1,7 @@
 import express from 'express'
 import morgan from 'morgan';
-import { closeDB, getAllFilms, getFavoriteFilms, getTopRated } from './dao.mjs'
+import { closeDB, getAllFilms, getFavoriteFilms, getLatestFilms, getTopRated } from './dao.mjs'
+import dayjs from 'dayjs';
 
 const app = express();
 
@@ -36,6 +37,14 @@ app.get('/films/tops', (req, res) => {
     })
 })
 
+// Get films watched in the last month
+app.get('/films/lastmonth', (req, res) => {
+    const currentDate = dayjs()
+    const lastMonth = currentDate.subtract(1, 'month')
+    getLatestFilms(currentDate, lastMonth).then((f) => {
+        res.json(f)
+    })
+})
 
 
 

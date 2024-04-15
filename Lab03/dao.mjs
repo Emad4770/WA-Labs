@@ -67,6 +67,24 @@ export function getTopRated() {
     })
 }
 
+export function getLatestFilms(currentDate, lastMonth) {
+    return new Promise((resolve, reject) => {
+        // console.log(lastMonth.toISOString());
+        const sql = `SELECT * FROM films
+        WHERE watchDate<= DATE(?) and watchDate >= DATE(?)`
+        db.all(sql, [currentDate.toISOString(), lastMonth.toISOString()], (err, rows) => {
+            if (err)
+                reject(err)
+            else if (rows.length == 0) {
+                resolve({ error: "No films have been watched in the past month!" })
+            }
+            else {
+                resolve(rowsToFilm(rows))
+            }
+        })
+    })
+}
+
 export function closeDB() {
     db.close()
 }
