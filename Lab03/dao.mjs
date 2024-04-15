@@ -69,7 +69,6 @@ export function getTopRated() {
 
 export function getLatestFilms(currentDate, lastMonth) {
     return new Promise((resolve, reject) => {
-        // console.log(lastMonth.toISOString());
         const sql = `SELECT * FROM films
         WHERE watchDate<= DATE(?) and watchDate >= DATE(?)`
         db.all(sql, [currentDate.toISOString(), lastMonth.toISOString()], (err, rows) => {

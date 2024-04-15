@@ -20,6 +20,8 @@ app.get('/films', (req, res) => {
         else {
             res.json(f)
         }
+    }).catch((err) => {
+        res.status(500).json({ error: err.message })
     })
 })
 
@@ -27,6 +29,8 @@ app.get('/films', (req, res) => {
 app.get('/films/favorites', (req, res) => {
     getFavoriteFilms().then((f) => {
         res.json(f)
+    }).catch((err) => {
+        res.status(500).json({ error: err.message })
     })
 })
 
@@ -34,6 +38,8 @@ app.get('/films/favorites', (req, res) => {
 app.get('/films/tops', (req, res) => {
     getTopRated().then((f) => {
         res.json(f)
+    }).catch((err) => {
+        res.status(500).json({ error: err.message })
     })
 })
 
@@ -43,6 +49,8 @@ app.get('/films/lastmonth', (req, res) => {
     const lastMonth = currentDate.subtract(1, 'month')
     getLatestFilms(currentDate, lastMonth).then((f) => {
         res.json(f)
+    }).catch((err) => {
+        res.status(500).json({ error: err.message })
     })
 })
 
