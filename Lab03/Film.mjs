@@ -1,4 +1,7 @@
 import dayjs from "dayjs";
+import utc from 'dayjs/plugin/utc.js'
+
+dayjs.extend(utc)
 
 export default function Film(id, title, favorite = false, watchDate = null, score = 0, userId = 1) {
 
@@ -6,7 +9,7 @@ export default function Film(id, title, favorite = false, watchDate = null, scor
     this.title = title;
     this.favorite = favorite;
     // saved as dayjs object only if watchDate is truthy
-    this.watchDate = watchDate && dayjs(watchDate);
+    this.watchDate = watchDate && dayjs.utc(watchDate);
     this.score = score;
     this.userId = userId;
     this.toString = () => {

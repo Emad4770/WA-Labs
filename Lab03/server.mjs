@@ -1,10 +1,12 @@
 import express from 'express'
 import morgan from 'morgan';
-import { addNewFilm, closeDB, getAllFilms, getFavoriteFilms, getFilm, getLatestFilms, getTopRated, getUnseenFilms } from './dao.mjs'
+import { updateFilm, addNewFilm, getAllFilms, getFavoriteFilms, getFilm, getLatestFilms, getTopRated, getUnseenFilms } from './dao.mjs'
 import dayjs from 'dayjs';
+import utc from 'dayjs/plugin/utc.js'
 import Film from './Film.mjs'
 import { body, param, validationResult } from 'express-validator';
 
+dayjs.extend(utc)
 const app = express();
 
 app.use(morgan('common'))
@@ -47,7 +49,7 @@ app.get('/films/tops', (req, res) => {
 
 // Get films watched in the last month
 app.get('/films/lastmonth', (req, res) => {
-    const currentDate = dayjs()
+    const currentDate = dayjs.utc()
     const lastMonth = currentDate.subtract(1, 'month')
     getLatestFilms(currentDate, lastMonth).then((f) => {
         res.json(f)
@@ -102,9 +104,26 @@ app.post('/films', body('watchDate').isDate(),
     })
 
 // Update an existing film
-app.put('/films/:id', (req, res) => {
+app.put('/films/:id', param('id').isInt(),
+    body('watchDate').isDate(),
+    body('rating').isInt({ min: 1, max: 5 }),
+    body('userId').isInt(), (req, res) => {
+        const errors = validationResult(req)
+        const filmId = req.params.id
 
-})
+        if (errors.isEmpty()) {
+            const updatedFilm = new Film(filmId, req.body.title, req.body.isFavorite, req.body.watchDate, req.body.rating, req.body.userId)
+            updateFilm(updatedFilm).then((f) => {
+                res.json(f)
+            }).catch((err) => {
+                res.status(500).json({ error: err })
+            })
+        }
+        else {
+            res.status(422).json({ errors: errors.array() })
+        }
+
+    })
 
 
 

@@ -99,7 +99,7 @@ userid
 the server will assing and ID
 res:
 {
-id
+film object
 }
 
 #Update an existing film, by providing its information, i.e., all the properties except the “id”

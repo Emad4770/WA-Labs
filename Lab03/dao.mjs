@@ -1,4 +1,3 @@
-import dayjs from "dayjs";
 import Film from "./Film.mjs";
 import sqlite from 'sqlite3'
 
@@ -119,33 +118,59 @@ export function getFilm(id) {
     })
 }
 
-export function addNewFilm(newFilm) {
+export function addNewFilm(film) {
     return new Promise((resolve, reject) => {
 
         const sql = `SELECT u.id FROM users u, films f
         WHERE u.id = f.userId AND f.userId = ?`
-        db.get(sql, [newFilm.userId], (err, row) => {
+        db.get(sql, [film.userId], (err, row) => {
             if (err)
                 reject(err)
             else if (row === undefined) {
                 resolve({ error: "This User Id doesn't exist in the Database!" })
             }
             else {
-
                 const sql = `INSERT INTO films(title,isFavorite,rating,watchDate,userId)
             VALUES (?,?,?,DATE(?),?)`
-                db.run(sql, [newFilm.title, newFilm.favorite ? 1 : 0, newFilm.score, newFilm.watchDate.toISOString(), newFilm.userId], function (err) {
+                db.run(sql, [film.title, film.favorite ? 1 : 0, film.score, film.watchDate.toISOString(), film.userId], function (err) {
                     if (err)
                         reject(err)
                     else
-                        resolve(new Film(this.lastID, newFilm.title, newFilm.isFavorite, newFilm.watchDate, newFilm.score, newFilm.userId))
+                        resolve(new Film(this.lastID, film.title, film.isFavorite, film.watchDate.toISOString(), film.score, film.userId))
+                })
+            }
+        })
+    })
+
+}
+
+export function updateFilm(film) {
+    return new Promise((resolve, reject) => {
+
+        const sql = `SELECT f.id from films f
+        WHERE f.id = ? and ? IN(SELECT id FROM users)`
+        db.get(sql, [film.id, film.userId], (err, row) => {
+            if (err)
+                reject(err)
+            else if (row === undefined)
+                resolve({ error: "Film ID and / or User ID not found, try again!" })
+            else {
+                const sql = `UPDATE films SET 
+                title = ?, isFavorite = ?,rating = ?, watchDate=DATE(?), userId=?
+                WHERE id = ?`
+                console.log(film.id);
+                db.run(sql, [film.title, film.favorite ? 1 : 0, film.score, film.watchDate.toISOString(), film.userId, film.id,], function (err) {
+                    if (err)
+                        reject(err)
+                    else
+                        resolve(new Film(film.id, film.title, film.isFavorite, film.watchDate.toISOString(), film.score, film.userId))
                 })
             }
         })
 
 
-    })
 
+    })
 }
 
 
