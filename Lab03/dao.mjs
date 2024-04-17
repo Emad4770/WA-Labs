@@ -198,6 +198,29 @@ export function updateRating(filmId, rating) {
     })
 }
 
+export function updateIsFavorite(filmId, isFavorite) {
+    return new Promise((resolve, reject) => {
+        const sql = `SELECT id FROM films
+        WHERE id = ?`
+        db.get(sql, [filmId], (err, row) => {
+            if (err)
+                reject(err)
+            else if (row === undefined)
+                resolve({ error: "No films found with the given ID!" })
+            else {
+                const sql = `UPDATE films SET
+                isFavorite = ? WHERE id = ?`
+                db.run(sql, [isFavorite, filmId], function (err) {
+                    if (err)
+                        reject(err)
+                    else
+                        resolve({ id: filmId, isFavorite: isFavorite })
+                })
+            }
+        })
+    })
+}
+
 
 export function closeDB() {
     db.close()
