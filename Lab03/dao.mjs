@@ -168,6 +168,31 @@ export function updateFilm(film) {
             }
         })
 
+    })
+}
+
+export function updateRating(filmId, rating) {
+    return new Promise((resolve, reject) => {
+
+        const sql = `SELECT id FROM films
+        WHERE id = ?`
+        db.get(sql, [filmId], (err, row) => {
+            if (err)
+                reject(err)
+            else if (row === undefined)
+                resolve({ error: "No films found with the given ID!" })
+            else {
+                const sql = `UPDATE films SET
+                rating = ? WHERE id = ?`
+                db.run(sql, [rating, filmId], function (err) {
+                    if (err)
+                        reject(err)
+                    else
+                        resolve({ id: filmId, score: rating })
+                })
+            }
+        })
+
 
 
     })

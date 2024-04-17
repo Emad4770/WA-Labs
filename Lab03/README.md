@@ -101,6 +101,9 @@ res:
 {
 film object
 }
+err:
+{ user id not found
+}
 
 #Update an existing film, by providing its information, i.e., all the properties except the “id”
 PUT /films/:id
@@ -119,11 +122,7 @@ userid
 err:
 1-
 {
-err: no films found with this id
-}
-2-?
-{
-err: some info missing, please provide all the information
+err: no films found with this id or user id
 }
 
 #Update the rating of a specific film.
@@ -142,9 +141,7 @@ err:
 {
 err: film doesnt exist
 }
-{
-err: cant assign rating to an unseen film
-}
+
 {
 err: invalid score value, should be between 0 - 5
 }

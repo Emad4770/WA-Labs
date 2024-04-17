@@ -1,6 +1,6 @@
 import express from 'express'
 import morgan from 'morgan';
-import { updateFilm, addNewFilm, getAllFilms, getFavoriteFilms, getFilm, getLatestFilms, getTopRated, getUnseenFilms } from './dao.mjs'
+import { updateFilm, addNewFilm, getAllFilms, getFavoriteFilms, getFilm, getLatestFilms, getTopRated, getUnseenFilms, updateRating } from './dao.mjs'
 import dayjs from 'dayjs';
 import utc from 'dayjs/plugin/utc.js'
 import Film from './Film.mjs'
@@ -123,6 +123,23 @@ app.put('/films/:id', param('id').isInt(),
             res.status(422).json({ errors: errors.array() })
         }
 
+    })
+
+// Update rating of a film
+app.put('/films/:id/rating', param('id').isInt(),
+    body('rating').isInt({ min: 0, max: 5 }), (req, res) => {
+        console.log("HIIIIIIIIIIIIII");
+        const errors = validationResult(req)
+        if (errors.isEmpty()) {
+            updateRating(req.params.id, req.body.rating).then((f) => {
+                res.json(f)
+            }).catch((err) => {
+                res.status(500).json({ error: err })
+            })
+        }
+        else {
+            res.json({ errors: errors.array() })
+        }
     })
 
 
