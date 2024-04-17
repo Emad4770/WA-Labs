@@ -120,16 +120,30 @@ export function getFilm(id) {
 }
 
 export function addNewFilm(newFilm) {
-
     return new Promise((resolve, reject) => {
-        const sql = `INSERT INTO films(title,isFavorite,rating,watchDate,userId)
-        VALUES (?,?,?,DATE(?),?)`
-        db.run(sql, [newFilm.title, newFilm.favorite ? 1 : 0, newFilm.score, newFilm.watchDate.toISOString(), newFilm.userId], function (err) {
+
+        const sql = `SELECT u.id FROM users u, films f
+        WHERE u.id = f.userId AND f.userId = ?`
+        db.get(sql, [newFilm.userId], (err, row) => {
             if (err)
                 reject(err)
-            else
-                resolve(new Film(this.lastID, newFilm.title, newFilm.isFavorite, newFilm.watchDate, newFilm.score, newFilm.userId))
+            else if (row === undefined) {
+                resolve({ error: "This User Id doesn't exist in the Database!" })
+            }
+            else {
+
+                const sql = `INSERT INTO films(title,isFavorite,rating,watchDate,userId)
+            VALUES (?,?,?,DATE(?),?)`
+                db.run(sql, [newFilm.title, newFilm.favorite ? 1 : 0, newFilm.score, newFilm.watchDate.toISOString(), newFilm.userId], function (err) {
+                    if (err)
+                        reject(err)
+                    else
+                        resolve(new Film(this.lastID, newFilm.title, newFilm.isFavorite, newFilm.watchDate, newFilm.score, newFilm.userId))
+                })
+            }
         })
+
+
     })
 
 }

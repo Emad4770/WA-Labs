@@ -3,7 +3,7 @@ import morgan from 'morgan';
 import { addNewFilm, closeDB, getAllFilms, getFavoriteFilms, getFilm, getLatestFilms, getTopRated, getUnseenFilms } from './dao.mjs'
 import dayjs from 'dayjs';
 import Film from './Film.mjs'
-import { check, validationResult } from 'express-validator';
+import { body, param, validationResult } from 'express-validator';
 
 const app = express();
 
@@ -67,29 +67,44 @@ app.get('/films/unseen', (req, res) => {
 })
 
 // Get a specific film
-app.get('/films/:id', (req, res) => {
-    const filmId = req.params.id
-    getFilm(filmId).then((f) => {
-        res.json(f)
-    })
+app.get('/films/:id', param('id').isInt(), (req, res) => {
+
+    const errors = validationResult(req)
+    if (errors.isEmpty()) {
+        const filmId = req.params.id
+        getFilm(filmId).then((f) => {
+            res.json(f)
+        })
+    }
+    else {
+        res.status(422).json({ errors: errors.array() })
+    }
+
 })
 
 // Create a new film
-app.post('/films', (req, res) => {
-    const title = req.body.title
-    const isFavorite = req.body.isFavorite
-    const watchDate = req.body.watchDate
-    const rating = req.body.rating
-    const userId = req.body.userId
-    const newFilm = new Film(1, title, isFavorite, watchDate, rating, userId)
-    addNewFilm(newFilm).then((f) => {
-        res.json(f)
-    }).catch((err) => {
-        res.status(500).json({ error: err.message })
+app.post('/films', body('watchDate').isDate(),
+    body('rating').isInt({ min: 1, max: 5 }),
+    body('userId').isInt(),
+    body(), (req, res) => {
+        const errors = validationResult(req)
+        if (errors.isEmpty()) {
+            const newFilm = new Film(1, req.body.title, req.body.isFavorite, req.body.watchDate, req.body.rating, req.body.userId)
+            addNewFilm(newFilm).then((f) => {
+                res.json(f)
+            }).catch((err) => {
+                res.status(500).json({ error: err.message })
+            })
+        }
+        else {
+            res.status(422).json({ errors: errors.array() })
+        }
     })
+
+// Update an existing film
+app.put('/films/:id', (req, res) => {
+
 })
-
-
 
 
 
