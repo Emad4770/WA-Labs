@@ -221,6 +221,28 @@ export function updateIsFavorite(filmId, isFavorite) {
     })
 }
 
+export function deleteFilm(filmId) {
+    return new Promise((resolve, reject) => {
+
+        const sql = `SELECT id FROM films
+        WHERE id = ?`
+        db.get(sql, [filmId], (err, row) => {
+            if (err)
+                reject(err)
+            else if (row === undefined)
+                resolve({ error: "No films found with the given ID!" })
+            else {
+                const sql = `DELETE FROM films WHERE id = ?`
+                db.run(sql, [filmId], function (err) {
+                    if (err)
+                        reject(err)
+                    else
+                        resolve({ id: filmId, status: "Deleted" })
+                })
+            }
+        })
+    })
+}
 
 export function closeDB() {
     db.close()

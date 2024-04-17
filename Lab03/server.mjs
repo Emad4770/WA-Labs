@@ -1,6 +1,6 @@
 import express from 'express'
 import morgan from 'morgan';
-import { updateFilm, addNewFilm, getAllFilms, getFavoriteFilms, getFilm, getLatestFilms, getTopRated, getUnseenFilms, updateRating, updateIsFavorite } from './dao.mjs'
+import { updateFilm, addNewFilm, getAllFilms, getFavoriteFilms, getFilm, getLatestFilms, getTopRated, getUnseenFilms, updateRating, updateIsFavorite, deleteFilm } from './dao.mjs'
 import dayjs from 'dayjs';
 import utc from 'dayjs/plugin/utc.js'
 import Film from './Film.mjs'
@@ -146,6 +146,21 @@ app.put('/films/:id/isfavorite', param('id').isInt(), (req, res) => {
     const errors = validationResult(req)
     if (errors.isEmpty()) {
         updateIsFavorite(req.params.id, req.body.isFavorite).then((f) => {
+            res.json(f)
+        }).catch((err) => {
+            res.status(500).json({ error: err })
+        })
+    }
+    else {
+        res.status(422).json({ errors: errors.array() })
+    }
+})
+
+// Delete a film
+app.get('/films/:id/delete', param('id').isInt(), (req, res) => {
+    const errors = validationResult(req)
+    if (errors.isEmpty()) {
+        deleteFilm(req.params.id).then((f) => {
             res.json(f)
         }).catch((err) => {
             res.status(500).json({ error: err })
