@@ -30,8 +30,8 @@ const filmValidation = [
     check('title').isString().notEmpty(),
     check('favorite').isBoolean().optional(),
     check('watchDate').optional({ nullable: true }).isISO8601({ strict: true }).toDate(),
-    check('score').optional({ nullable: true }).isInt({ min: 0, max: 5 })
-    // check('userId').isInt()
+    check('score').optional({ nullable: true }).isInt({ min: 0, max: 5 }),
+    check('userId').isInt()
 ]
 
 /*** Films APIs ***/
