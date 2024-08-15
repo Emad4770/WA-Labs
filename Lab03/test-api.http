@@ -55,15 +55,15 @@ GET http://localhost:3000/api/films?filter=filter-lastmonth HTTP/1.1
 
 
 ## Updates the first film.
-PUT http://localhost:3000/api/films/1 HTTP/1.1
+PUT http://localhost:3000/api/films/58 HTTP/1.1
 content-type: application/json
 
 {
     "title": "The Hangover",
     "favorite": false,
-    "watchDate": null,
-    "rating": null,
-    "userId": 1
+    "watchDate": "2024-02-01",
+    "rating": 3,
+    "userId": 2
 }
 ###
 
@@ -78,7 +78,7 @@ content-type: application/json
 ###
 
 ## Updates film rating property.
-PUT http://localhost:3000/api/films/1/rating HTTP/1.1
+PUT http://localhost:3000/api/films/57/rating HTTP/1.1
 content-type: application/json
 
 {
@@ -88,7 +88,7 @@ content-type: application/json
 
 
 ## Deletes film.
-DELETE http://localhost:3000/api/films/1 HTTP/1.1
+DELETE http://localhost:3000/api/films/60 HTTP/1.1
 ###
 
 

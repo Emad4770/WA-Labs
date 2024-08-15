@@ -30,8 +30,8 @@ const filmValidation = [
     check('title').isString().notEmpty(),
     check('favorite').isBoolean().optional(),
     check('watchDate').optional({ nullable: true }).isISO8601({ strict: true }).toDate(),
-    check('score').optional({ nullable: true }).isInt({ min: 0, max: 5 }),
-    check('userId').isInt()
+    check('score').optional({ nullable: true }).isInt({ min: 0, max: 5 })
+    // check('userId').isInt()
 ]
 
 /*** Films APIs ***/
@@ -94,9 +94,7 @@ app.get('/api/films', async (req, res) => {
 
 app.get('/api/films/:id', param('id').isInt(), (req, res) => {
 
-
     const errors = validationResult(req)
-
     if (!errors.isEmpty()) {
         return onValidationErrors(errors, res);
     }
@@ -104,10 +102,10 @@ app.get('/api/films/:id', param('id').isInt(), (req, res) => {
         const filmId = req.params.id
         filmDao.getFilm(filmId).then((f) => {
             res.json(f)
+        }).catch((err) => {
+            res.status(500).json({ error: err.message })
         })
     }
-
-
 })
 
 // Create a new film
@@ -127,48 +125,45 @@ app.post('/api/films', filmValidation, (req, res) => {
 })
 
 // Update an existing film
-app.put('/films/:id', param('id').isInt(),
-    body('watchDate').isDate(),
-    body('rating').isInt({ min: 1, max: 5 }),
-    body('userId').isInt(), (req, res) => {
-        const errors = validationResult(req)
-        const filmId = req.params.id
+app.put('/api/films/:id', filmValidation, (req, res) => {
+    const errors = validationResult(req)
+    const filmId = Number(req.params.id)
 
-        if (errors.isEmpty()) {
-            const updatedFilm = new Film(filmId, req.body.title, req.body.isFavorite, req.body.watchDate, req.body.rating, req.body.userId)
-            updateFilm(updatedFilm).then((f) => {
-                res.json(f)
-            }).catch((err) => {
-                res.status(500).json({ error: err })
-            })
-        }
-        else {
-            res.status(422).json({ errors: errors.array() })
-        }
+    if (!errors.isEmpty()) {
+        return onValidationErrors(errors, res);
+    }
+    else {
+        const updatedFilm = new Film(filmId, req.body.title, req.body.favorite, req.body.watchDate, req.body.rating, req.body.userId)
+        filmDao.updateFilm(updatedFilm).then((f) => {
+            res.json(f)
+        }).catch((err) => {
+            res.status(500).json({ error: err })
+        })
+    }
 
-    })
+})
 
 // Update rating of a film
-app.put('/films/:id/rating', param('id').isInt(),
-    body('rating').isInt({ min: 0, max: 5 }), (req, res) => {
-        const errors = validationResult(req)
-        if (errors.isEmpty()) {
-            updateRating(req.params.id, req.body.rating).then((f) => {
-                res.json(f)
-            }).catch((err) => {
-                res.status(500).json({ error: err })
-            })
-        }
-        else {
-            res.json({ errors: errors.array() })
-        }
-    })
-
-// Mark a film as favorite/unfavorite
-app.put('/films/:id/isfavorite', param('id').isInt(), (req, res) => {
+app.put('/api/films/:id/rating', [param('id').isInt(),
+check('rating').isInt({ min: 0, max: 5 })], (req, res) => {
     const errors = validationResult(req)
     if (errors.isEmpty()) {
-        updateIsFavorite(req.params.id, req.body.isFavorite).then((f) => {
+        filmDao.updateRating(req.params.id, req.body.rating).then((f) => {
+            res.json(f)
+        }).catch((err) => {
+            res.status(500).json({ error: err })
+        })
+    }
+    else {
+        res.json({ errors: errors.array() })
+    }
+})
+
+// Mark a film as favorite/unfavorite
+app.put('/api/films/:id/favorite', [param('id').isInt(), check('favorite').isBoolean()], (req, res) => {
+    const errors = validationResult(req)
+    if (errors.isEmpty()) {
+        filmDao.updateIsFavorite(req.params.id, req.body.favorite).then((f) => {
             res.json(f)
         }).catch((err) => {
             res.status(500).json({ error: err })
@@ -180,10 +175,10 @@ app.put('/films/:id/isfavorite', param('id').isInt(), (req, res) => {
 })
 
 // Delete a film
-app.get('/films/:id/delete', param('id').isInt(), (req, res) => {
+app.delete('/api/films/:id', param('id').isInt(), (req, res) => {
     const errors = validationResult(req)
     if (errors.isEmpty()) {
-        deleteFilm(req.params.id).then((f) => {
+        filmDao.deleteFilm(req.params.id).then((f) => {
             res.json(f)
         }).catch((err) => {
             res.status(500).json({ error: err })

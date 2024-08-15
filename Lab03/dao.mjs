@@ -181,7 +181,7 @@ export default function FilmDao() {
 
 
     this.addNewFilm = (film) => {
-        // const favorite = film.favorite ? film.favorite : false
+        const favorite = film.favorite ? film.favorite : false
         const score = (film.score && film.score <= 5 && film.score >= 0) ? film.score : null
         const watchDate = film.watchDate ? film.watchDate.format("YYYY-MM-DD") : null;
         const userId = ("userId" in film && film.userId) ? film.userId : null;
@@ -224,109 +224,116 @@ export default function FilmDao() {
             });
         });
     }
-}
-export function updateFilm(film) {
-    return new Promise((resolve, reject) => {
-        const sql = `SELECT f.id from films f
+
+    this.updateFilm = (film) => {
+
+        const favorite = film.favorite ? film.favorite : false
+        const score = (film.score && film.score <= 5 && film.score >= 0) ? film.score : null
+        const watchDate = film.watchDate ? film.watchDate.format("YYYY-MM-DD") : null;
+        const userId = ("userId" in film && film.userId) ? film.userId : null;
+
+        return new Promise((resolve, reject) => {
+            const sql = `SELECT f.id from films f
         WHERE f.id = ? and ? IN(SELECT id FROM users)`;
-        db.get(sql, [film.id, film.userId], (err, row) => {
-            if (err) reject(err);
-            else if (row === undefined)
-                resolve({ error: "Film ID and / or User ID not found, try again!" });
-            else {
-                const sql = `UPDATE films SET 
-                title = ?, isFavorite = ?,rating = ?, watchDate=DATE(?), userId=?
+            db.get(sql, [film.id, film.userId], (err, row) => {
+                if (err) reject(err);
+                else if (row === undefined)
+                    resolve({ error: "Film ID and / or User ID not found, try again!" });
+                else {
+                    const sql = `UPDATE films SET 
+                title = ?, isFavorite = ?,rating = ?, watchDate=?, userId=?
                 WHERE id = ?`;
-                console.log(film.id);
-                db.run(
-                    sql,
-                    [
-                        film.title,
-                        film.favorite ? 1 : 0,
-                        film.score,
-                        film.watchDate.toISOString(),
-                        film.userId,
-                        film.id,
-                    ],
-                    function (err) {
-                        if (err) reject(err);
-                        else
-                            resolve(
-                                new Film(
-                                    film.id,
-                                    film.title,
-                                    film.isFavorite,
-                                    film.watchDate.toISOString(),
-                                    film.score,
-                                    film.userId
-                                )
-                            );
-                    }
-                );
-            }
+                    console.log(film.id);
+                    db.run(
+                        sql,
+                        [
+                            film.title,
+                            favorite,
+                            score,
+                            watchDate,
+                            userId,
+                            film.id,
+                        ],
+                        function (err) {
+                            if (err) reject(err);
+                            else
+                                resolve(
+                                    new Film(
+                                        film.id,
+                                        film.title,
+                                        film.favorite,
+                                        film.watchDate,
+                                        film.score,
+                                        film.userId
+                                    )
+                                );
+                        }
+                    );
+                }
+            });
         });
-    });
-}
+    }
 
-export function updateRating(filmId, rating) {
-    return new Promise((resolve, reject) => {
-        const sql = `SELECT id FROM films
+    this.updateRating = (filmId, rating) => {
+
+        return new Promise((resolve, reject) => {
+            const sql = `SELECT id FROM films
         WHERE id = ?`;
-        db.get(sql, [filmId], (err, row) => {
-            if (err) reject(err);
-            else if (row === undefined)
-                resolve({ error: "No films found with the given ID!" });
-            else {
-                const sql = `UPDATE films SET
+            db.get(sql, [filmId], (err, row) => {
+                if (err) reject(err);
+                else if (row === undefined)
+                    resolve({ error: "No films found with the given ID!" });
+                else {
+                    const sql = `UPDATE films SET
                 rating = ? WHERE id = ?`;
-                db.run(sql, [rating, filmId], function (err) {
-                    if (err) reject(err);
-                    else resolve({ id: filmId, score: rating });
-                });
-            }
+                    db.run(sql, [rating, filmId], function (err) {
+                        if (err) reject(err);
+                        else resolve({ id: filmId, score: rating });
+                    });
+                }
+            });
         });
-    });
-}
+    }
 
-export function updateIsFavorite(filmId, isFavorite) {
-    return new Promise((resolve, reject) => {
-        const sql = `SELECT id FROM films
+    this.updateIsFavorite = (filmId, isFavorite) => {
+        return new Promise((resolve, reject) => {
+            const sql = `SELECT id FROM films
         WHERE id = ?`;
-        db.get(sql, [filmId], (err, row) => {
-            if (err) reject(err);
-            else if (row === undefined)
-                resolve({ error: "No films found with the given ID!" });
-            else {
-                const sql = `UPDATE films SET
+            db.get(sql, [filmId], (err, row) => {
+                if (err) reject(err);
+                else if (row === undefined)
+                    resolve({ error: "No films found with the given ID!" });
+                else {
+                    const sql = `UPDATE films SET
                 isFavorite = ? WHERE id = ?`;
-                db.run(sql, [isFavorite, filmId], function (err) {
-                    if (err) reject(err);
-                    else resolve({ id: filmId, isFavorite: isFavorite });
-                });
-            }
+                    db.run(sql, [isFavorite, filmId], function (err) {
+                        if (err) reject(err);
+                        else resolve({ id: filmId, isFavorite: isFavorite });
+                    });
+                }
+            });
         });
-    });
-}
+    }
 
-export function deleteFilm(filmId) {
-    return new Promise((resolve, reject) => {
-        const sql = `SELECT id FROM films
+    this.deleteFilm = (filmId) => {
+        return new Promise((resolve, reject) => {
+            const sql = `SELECT id FROM films
         WHERE id = ?`;
-        db.get(sql, [filmId], (err, row) => {
-            if (err) reject(err);
-            else if (row === undefined)
-                resolve({ error: "No films found with the given ID!" });
-            else {
-                const sql = `DELETE FROM films WHERE id = ?`;
-                db.run(sql, [filmId], function (err) {
-                    if (err) reject(err);
-                    else resolve({ id: filmId, status: "Deleted" });
-                });
-            }
+            db.get(sql, [filmId], (err, row) => {
+                if (err) reject(err);
+                else if (row === undefined)
+                    resolve({ error: "No films found with the given ID!" });
+                else {
+                    const sql = `DELETE FROM films WHERE id = ?`;
+                    db.run(sql, [filmId], function (err) {
+                        if (err) reject(err);
+                        else resolve(this.changes);
+                    });
+                }
+            });
         });
-    });
+    }
 }
-
 export function closeDB() {
     db.close();
 }
