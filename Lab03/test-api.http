@@ -75,12 +75,12 @@ content-type: application/json
 
 
 ## Deletes film.
-DELETE http://localhost:3001/api/films/1 HTTP/1.1
+DELETE http://localhost:3000/api/films/1 HTTP/1.1
 ###
 
 
 ## Retrieving all the films.
-GET http://localhost:3001/api/films HTTP/1.1
+GET http://localhost:3000/api/films HTTP/1.1
 ###
 
 
@@ -88,15 +88,15 @@ GET http://localhost:3001/api/films HTTP/1.1
 # Wrong Requests
 
 ## Trying to retrieve a film with an ID that does not exist.
-GET http://localhost:3001/api/films/1000 HTTP/1.1
+GET http://localhost:3000/api/films/1000 HTTP/1.1
 ###
 
 ## Trying to retrieve a film with a wrong ID.
-GET http://localhost:3001/api/films/ThisIsAStringId HTTP/1.1
+GET http://localhost:3000/api/films/ThisIsAStringId HTTP/1.1
 ###
 
 ## Trying to create a wrong film.
-POST http://localhost:3001/api/films HTTP/1.1
+POST http://localhost:3000/api/films HTTP/1.1
 content-type: application/json
 
 {
@@ -108,7 +108,7 @@ content-type: application/json
 ###
 
 ## Trying to update a film with wrong values.
-PUT http://localhost:3001/api/films/1 HTTP/1.1
+PUT http://localhost:3000/api/films/1 HTTP/1.1
 content-type: application/json
 
 {
@@ -120,7 +120,7 @@ content-type: application/json
 ###
 
 ## Trying to updates film favorite property with a wrong value.
-PUT http://localhost:3001/api/films/1/favorite HTTP/1.1
+PUT http://localhost:3000/api/films/1/favorite HTTP/1.1
 content-type: application/json
 
 {
@@ -129,7 +129,7 @@ content-type: application/json
 ###
 
 ## Trying to update film rating property with a wrong value.
-PUT http://localhost:3001/api/films/1/rating HTTP/1.1
+PUT http://localhost:3000/api/films/1/rating HTTP/1.1
 content-type: application/json
 
 {
@@ -138,7 +138,7 @@ content-type: application/json
 ###
 
 ## Updates film with and id that does not exists
-PUT http://localhost:3001/api/films/999 HTTP/1.1
+PUT http://localhost:3000/api/films/999 HTTP/1.1
 content-type: application/json
 
 {
