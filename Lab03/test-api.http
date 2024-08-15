@@ -88,7 +88,7 @@ content-type: application/json
 
 
 ## Deletes film.
-DELETE http://localhost:3000/api/films/60 HTTP/1.1
+DELETE http://localhost:3000/api/films/62 HTTP/1.1
 ###
 
 
@@ -167,7 +167,7 @@ content-type: application/json
 {
     "title": "The Hangover",
     "favorite": false,
-    "watchDate": "",
+    "watchDate": null,
     "rating": null,
     "userId": 1
 }
