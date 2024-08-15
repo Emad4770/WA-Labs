@@ -3,7 +3,7 @@ import utc from 'dayjs/plugin/utc.js'
 
 dayjs.extend(utc)
 
-export default function Film(id, title, favorite = false, watchDate = null, score = 0, userId = 1) {
+export default function Film(id, title, favorite = false, watchDate = null, score = 0, userId) {
 
     this.id = id;
     this.title = title;

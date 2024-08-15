@@ -4,7 +4,7 @@ import morgan from 'morgan';
 import dayjs from 'dayjs';
 import utc from 'dayjs/plugin/utc.js'
 import Film from './Film.mjs'
-import { check, body, param, validationResult } from 'express-validator';
+import { check, body, param, validationResult, checkSchema } from 'express-validator';
 import FilmDao from './dao.mjs';
 
 dayjs.extend(utc)
@@ -27,7 +27,11 @@ const errorFormatter = ({ msg }) => {
 };
 
 const filmValidation = [
-    check('title').isString().notEmpty()
+    check('title').isString().notEmpty(),
+    check('favorite').isBoolean().optional(),
+    check('watchDate').optional({ nullable: true }).isISO8601({ strict: true }).toDate(),
+    check('score').optional({ nullable: true }).isInt({ min: 0, max: 5 })
+    // check('userId').isInt()
 ]
 
 /*** Films APIs ***/
@@ -109,16 +113,16 @@ app.get('/api/films/:id', param('id').isInt(), (req, res) => {
 // Create a new film
 app.post('/api/films', filmValidation, (req, res) => {
     const errors = validationResult(req)
-    if (errors.isEmpty()) {
-        const newFilm = new Film(1, req.body.title, req.body.isFavorite, req.body.watchDate, req.body.rating, req.body.userId)
-        addNewFilm(newFilm).then((f) => {
+    if (!errors.isEmpty()) {
+        return onValidationErrors(errors, res);
+    }
+    else {
+        const newFilm = new Film(undefined, req.body.title, req.body.favorite, req.body.watchDate, req.body.rating, req.body.userId)
+        filmDao.addNewFilm(newFilm).then((f) => {
             res.json(f)
         }).catch((err) => {
             res.status(500).json({ error: err.message })
         })
-    }
-    else {
-        res.status(422).json({ errors: errors.array() })
     }
 })
 

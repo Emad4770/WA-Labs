@@ -22,16 +22,29 @@ content-type: application/json
     "favorite": true,
     "watchDate": "{{$datetime 'YYYY-MM-DD' -15 d }}",
     "rating": 4,
-    "userId": 1
+    "userId": 0
+}
+###
+## Create new film (with all the fields except ID)
+POST http://localhost:3000/api/films HTTP/1.1
+content-type: application/json
+
+{
+    "title": "Guardians of the Galaxy Vol.3",
+    "favorite": true,
+    "watchDate": null,
+    "rating": 4,
+    "userId": 3
 }
 ###
 
-## Create new film (without only title)
+## Create new film (with only title)
 POST http://localhost:3000/api/films HTTP/1.1
 content-type: application/json
 
 {
     "title": "Inception"
+    
 }
 ###
 
@@ -106,7 +119,17 @@ content-type: application/json
     "rating": 35
 }
 ###
+## Trying to create a wrong film.
+POST http://localhost:3000/api/films HTTP/1.1
+content-type: application/json
 
+{
+    "title": "Guardians of the Galaxy Vol.3",
+    "favorite": 1,
+    "watchDate": "2024-08-10",
+    "rating": 5
+}
+###
 ## Trying to update a film with wrong values.
 PUT http://localhost:3000/api/films/1 HTTP/1.1
 content-type: application/json

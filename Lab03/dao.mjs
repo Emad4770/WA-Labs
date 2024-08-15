@@ -178,48 +178,53 @@ export default function FilmDao() {
             });
         });
     }
-}
 
-export function addNewFilm(film) {
-    return new Promise((resolve, reject) => {
-        const sql = `SELECT u.id FROM users u, films f
+
+    this.addNewFilm = (film) => {
+        // const favorite = film.favorite ? film.favorite : false
+        const score = (film.score && film.score <= 5 && film.score >= 0) ? film.score : null
+        const watchDate = film.watchDate ? film.watchDate.format("YYYY-MM-DD") : null;
+        const userId = ("userId" in film && film.userId) ? film.userId : null;
+        console.log(userId)
+        return new Promise((resolve, reject) => {
+            const sql = `SELECT u.id FROM users u, films f
         WHERE u.id = f.userId AND f.userId = ?`;
-        db.get(sql, [film.userId], (err, row) => {
-            if (err) reject(err);
-            else if (row === undefined) {
-                resolve({ error: "This User Id doesn't exist in the Database!" });
-            } else {
-                const sql = `INSERT INTO films(title,isFavorite,rating,watchDate,userId)
-            VALUES (?,?,?,DATE(?),?)`;
-                db.run(
-                    sql,
-                    [
-                        film.title,
-                        film.favorite ? 1 : 0,
-                        film.score,
-                        film.watchDate.toISOString(),
-                        film.userId,
-                    ],
-                    function (err) {
-                        if (err) reject(err);
-                        else
-                            resolve(
-                                new Film(
-                                    this.lastID,
-                                    film.title,
-                                    film.isFavorite,
-                                    film.watchDate.toISOString(),
-                                    film.score,
-                                    film.userId
-                                )
-                            );
-                    }
-                );
-            }
+            db.get(sql, [film.userId], (err, row) => {
+                if (err) reject(err);
+                else if (row === undefined) {
+                    resolve({ error: "This User Id doesn't exist in the Database!" });
+                } else {
+                    const sql = `INSERT INTO films(title,isFavorite,rating,watchDate,userId)
+            VALUES (?,?,?,?,?)`;
+                    db.run(
+                        sql,
+                        [
+                            film.title,
+                            film.favorite,
+                            score,
+                            watchDate,
+                            userId,
+                        ],
+                        function (err) {
+                            if (err) reject(err);
+                            else
+                                resolve(
+                                    new Film(
+                                        this.lastID,
+                                        film.title,
+                                        film.favorite,
+                                        film.watchDate,
+                                        film.score,
+                                        film.userId
+                                    )
+                                );
+                        }
+                    );
+                }
+            });
         });
-    });
+    }
 }
-
 export function updateFilm(film) {
     return new Promise((resolve, reject) => {
         const sql = `SELECT f.id from films f
