@@ -1,10 +1,10 @@
 import express from 'express'
 import morgan from 'morgan';
-import { updateFilm, addNewFilm, getAllFilms, getFavoriteFilms, getFilm, getLatestFilms, getTopRated, getUnseenFilms, updateRating, updateIsFavorite, deleteFilm } from './dao.mjs'
+// import { updateFilm, addNewFilm, getAllFilms, getFavoriteFilms, getFilm, getLatestFilms, getTopRated, getUnseenFilms, updateRating, updateIsFavorite, deleteFilm } from './dao.mjs'
 import dayjs from 'dayjs';
 import utc from 'dayjs/plugin/utc.js'
 import Film from './Film.mjs'
-import { body, param, validationResult } from 'express-validator';
+import { check, body, param, validationResult } from 'express-validator';
 import FilmDao from './dao.mjs';
 
 dayjs.extend(utc)
@@ -15,6 +15,25 @@ app.use(morgan('common'))
 app.use(express.json())
 
 
+// This function is used to handle validation errors
+const onValidationErrors = (validationResult, res) => {
+    const errors = validationResult.formatWith(errorFormatter);
+    return res.status(422).json({ validationErrors: errors.mapped() });
+};
+
+// Only keep the error message in the response
+const errorFormatter = ({ msg }) => {
+    return msg;
+};
+
+const filmValidation = [
+    check('title').isString().notEmpty()
+]
+
+/*** Films APIs ***/
+// 1. Retrieve the list of all the available films.
+// GET /api/films
+// This route returns the FilmLibrary. It handles also "filter=?" query parameter
 app.get('/api/films', async (req, res) => {
     try {
         const films = await filmDao.getFilms(req.query.filter)
@@ -27,78 +46,81 @@ app.get('/api/films', async (req, res) => {
 })
 
 // Get all the favorite films
-app.get('/films/favorites', (req, res) => {
-    getFavoriteFilms().then((f) => {
-        res.json(f)
-    }).catch((err) => {
-        res.status(500).json({ error: err.message })
-    })
-})
+// app.get('/films/favorites', (req, res) => {
+//     getFavoriteFilms().then((f) => {
+//         res.json(f)
+//     }).catch((err) => {
+//         res.status(500).json({ error: err.message })
+//     })
+// })
 
 // Get best rated films
-app.get('/films/tops', (req, res) => {
-    getTopRated().then((f) => {
-        res.json(f)
-    }).catch((err) => {
-        res.status(500).json({ error: err.message })
-    })
-})
+// app.get('/films/tops', (req, res) => {
+//     getTopRated().then((f) => {
+//         res.json(f)
+//     }).catch((err) => {
+//         res.status(500).json({ error: err.message })
+//     })
+// })
 
 // Get films watched in the last month
-app.get('/films/lastmonth', (req, res) => {
-    const currentDate = dayjs.utc()
-    const lastMonth = currentDate.subtract(1, 'month')
-    getLatestFilms(currentDate, lastMonth).then((f) => {
-        res.json(f)
-    }).catch((err) => {
-        res.status(500).json({ error: err.message })
-    })
-})
+// app.get('/films/lastmonth', (req, res) => {
+//     const currentDate = dayjs.utc()
+//     const lastMonth = currentDate.subtract(1, 'month')
+//     getLatestFilms(currentDate, lastMonth).then((f) => {
+//         res.json(f)
+//     }).catch((err) => {
+//         res.status(500).json({ error: err.message })
+//     })
+// })
 
 // Get all unseen films
-app.get('/films/unseen', (req, res) => {
-    getUnseenFilms().then((f) => {
-        res.json(f)
-    }).catch((err) => {
-        res.status(500).json({ error: err.message })
-    })
+// app.get('/films/unseen', (req, res) => {
+//     getUnseenFilms().then((f) => {
+//         res.json(f)
+//     }).catch((err) => {
+//         res.status(500).json({ error: err.message })
+//     })
+
+// })
+
+// 2. Retrieve a film, given its "id".
+// GET /api/films/<id>
+// Given a film id, this route returns the associated film from the library.
+
+app.get('/api/films/:id', param('id').isInt(), (req, res) => {
+
+
+    const errors = validationResult(req)
+
+    if (!errors.isEmpty()) {
+        return onValidationErrors(errors, res);
+    }
+    else {
+        const filmId = req.params.id
+        filmDao.getFilm(filmId).then((f) => {
+            res.json(f)
+        })
+    }
+
 
 })
 
-// Get a specific film
-app.get('/films/:id', param('id').isInt(), (req, res) => {
-
+// Create a new film
+app.post('/api/films', filmValidation, (req, res) => {
     const errors = validationResult(req)
     if (errors.isEmpty()) {
-        const filmId = req.params.id
-        getFilm(filmId).then((f) => {
+        const newFilm = new Film(1, req.body.title, req.body.isFavorite, req.body.watchDate, req.body.rating, req.body.userId)
+        addNewFilm(newFilm).then((f) => {
             res.json(f)
+        }).catch((err) => {
+            res.status(500).json({ error: err.message })
         })
     }
     else {
         res.status(422).json({ errors: errors.array() })
     }
-
 })
-
-// Create a new film
-app.post('/films', body('watchDate').isDate(),
-    body('rating').isInt({ min: 1, max: 5 }),
-    body('userId').isInt(),
-    body(), (req, res) => {
-        const errors = validationResult(req)
-        if (errors.isEmpty()) {
-            const newFilm = new Film(1, req.body.title, req.body.isFavorite, req.body.watchDate, req.body.rating, req.body.userId)
-            addNewFilm(newFilm).then((f) => {
-                res.json(f)
-            }).catch((err) => {
-                res.status(500).json({ error: err.message })
-            })
-        }
-        else {
-            res.status(422).json({ errors: errors.array() })
-        }
-    })
 
 // Update an existing film
 app.put('/films/:id', param('id').isInt(),
