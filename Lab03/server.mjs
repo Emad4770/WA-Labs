@@ -5,28 +5,25 @@ import dayjs from 'dayjs';
 import utc from 'dayjs/plugin/utc.js'
 import Film from './Film.mjs'
 import { body, param, validationResult } from 'express-validator';
+import FilmDao from './dao.mjs';
 
 dayjs.extend(utc)
 const app = express();
+const filmDao = new FilmDao();
 
 app.use(morgan('common'))
 app.use(express.json())
 
-// Get a list of all films
-app.get('/films', (req, res) => {
-    getAllFilms().then((f) => {
-        if (!f.error) {
-            const films = f.map(element => {
-                return { id: element.id, title: element.title }
-            });
-            res.json(films)
-        }
-        else {
-            res.json(f)
-        }
-    }).catch((err) => {
+
+app.get('/api/films', async (req, res) => {
+    try {
+        const films = await filmDao.getFilms(req.query.filter)
+        res.json(films)
+    }
+    catch (err) {
         res.status(500).json({ error: err.message })
-    })
+    }
+
 })
 
 // Get all the favorite films
