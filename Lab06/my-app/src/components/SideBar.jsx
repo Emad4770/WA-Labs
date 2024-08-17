@@ -3,18 +3,17 @@ import PropTypes from "prop-types";
 import { Table } from "react-bootstrap";
 
 function SideBar(props) {
+  const filters = props.filters.map((filter, i) => (
+    <tr key={i}>
+      <td>
+        {filter} {i}
+      </td>
+    </tr>
+  ));
   return (
-    <>
-      <Table className="table table-hover" responsive>
-        <tbody>
-          {props.filters.map((filter, i) => (
-            <tr key={i}>
-              <td>{filter}</td>
-            </tr>
-          ))}
-        </tbody>
-      </Table>
-    </>
+    <Table className="table table-hover">
+      <tbody>{filters}</tbody>
+    </Table>
   );
 }
 
