@@ -12,7 +12,11 @@ function Films(props) {
       </Row>
       <Row>
         <Col>
-          <FilmTable films={props.films} />
+          <FilmTable
+            films={props.films}
+            deleteFilm={props.deleteFilm}
+            editFilm={props.editFilm}
+          />
         </Col>
       </Row>
     </>
@@ -32,7 +36,12 @@ function FilmTable(props) {
       </thead>
       <tbody>
         {props.films.map((film) => (
-          <FilmRow film={film} key={film.id} />
+          <FilmRow
+            film={film}
+            key={film.id}
+            deleteFilm={props.deleteFilm}
+            editFilm={props.editFilm}
+          />
         ))}
       </tbody>
     </Table>
@@ -43,7 +52,11 @@ function FilmRow(props) {
   return (
     <tr>
       <FilmData film={props.film} />
-      {/* <FilmActions /> */}
+      <FilmActions
+        filmId={props.film.id}
+        deleteFilm={props.deleteFilm}
+        editFilm={props.editFilm}
+      />
     </tr>
   );
 }
@@ -129,6 +142,23 @@ function FilmData(props) {
   );
 }
 
-// function FilmActions(props) {}
+function FilmActions(props) {
+  return (
+    <>
+      <td>
+        <i
+          className="bi bi-pencil-square"
+          onClick={() => props.editFilm(props.filmId)}
+        ></i>
+      </td>
+      <td>
+        <i
+          className="bi bi-trash"
+          onClick={() => props.deleteFilm(props.filmId)}
+        ></i>
+      </td>
+    </>
+  );
+}
 
 export default Films;
