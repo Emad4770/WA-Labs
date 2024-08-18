@@ -3,9 +3,9 @@ import { Button } from "react-bootstrap";
 
 function AddButton(props) {
   return (
-    <div className="position-fixed bottom-0 end-0 p-5">
+    <div className="position-fixed bottom-0 end-0 p-4">
       <Button
-        className="btn btn-primary rounded-circle"
+        className="btn btn-primary rounded-circle  p-3"
         onClick={() => props.addFilm("hello", true, "2023-10-09", 5, 2)}
       >
         <i className="bi bi-plus-lg"></i>
