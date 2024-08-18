@@ -26,29 +26,31 @@ function Films(props) {
 
 function FilmTable(props) {
   return (
-    <Table className="table-hover" striped>
-      <thead>
-        <tr>
-          <th>Title</th>
-          <th>Favorite</th>
-          <th>Watch Date</th>
-          <th>Rating</th>
-        </tr>
-      </thead>
-      <tbody>
-        {props.films.map(
-          (film) =>
-            props.filterFunction(film) && (
-              <FilmRow
-                film={film}
-                key={film.id}
-                deleteFilm={props.deleteFilm}
-                editFilm={props.editFilm}
-              />
-            )
-        )}
-      </tbody>
-    </Table>
+    props.films.length > 0 && (
+      <Table className="table-hover" striped id="film-table">
+        <thead>
+          <tr>
+            <th>Title</th>
+            <th>Favorite</th>
+            <th>Watch Date</th>
+            <th>Rating</th>
+          </tr>
+        </thead>
+        <tbody>
+          {props.films.map(
+            (film) =>
+              props.filterFunction(film) && (
+                <FilmRow
+                  film={film}
+                  key={film.id}
+                  deleteFilm={props.deleteFilm}
+                  editFilm={props.editFilm}
+                />
+              )
+          )}
+        </tbody>
+      </Table>
+    )
   );
 }
 

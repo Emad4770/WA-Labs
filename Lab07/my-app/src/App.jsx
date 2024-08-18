@@ -1,5 +1,6 @@
 import "bootstrap/dist/css/bootstrap.min.css";
 import "bootstrap-icons/font/bootstrap-icons.css";
+import "./App.css";
 import NavigationBar from "./components/Navigationbar";
 import { Col, Container, Row } from "react-bootstrap";
 import SideBar from "./components/SideBar";
@@ -52,7 +53,7 @@ function App() {
     setFilms((films) =>
       films.concat(
         new Film(
-          films[films.length - 1].id + 1,
+          films.length > 0 ? films[films.length - 1].id + 1 : 1,
           title,
           favorite,
           watchDate,
