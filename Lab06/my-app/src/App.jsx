@@ -6,6 +6,7 @@ import SideBar from "./components/SideBar";
 import Film from "./Film.mjs";
 import FilmList from "./components/FilmComponents";
 import { useState } from "react";
+import AddButton from "./components/AddButton";
 
 const filtersList = [
   "All",
@@ -30,7 +31,7 @@ const filters = {
 };
 const film1 = new Film(1, "Godfather", true, "2024-01-20", 0, 1);
 const film2 = new Film(2, "Matrix", false, null, 4, 1);
-const film3 = new Film(3, "21 Grams", true, "2022-09-10", 1, 2);
+const film3 = new Film(3, "21Grams", true, "2022-09-10", 1, 2);
 const film4 = new Film(4, "Spiderman", true, "2024-08-10", 5, 2);
 const filmList = [film1, film2, film3, film4];
 
@@ -45,6 +46,21 @@ function App() {
   const deleteFilm = (id) => {
     setFilms(films.filter((film) => film.id != id));
     console.log("deleted " + id);
+  };
+
+  const addFilm = (title, favorite, watchDate, score, userId) => {
+    setFilms((films) =>
+      films.concat(
+        new Film(
+          films[films.length - 1].id + 1,
+          title,
+          favorite,
+          watchDate,
+          score,
+          userId
+        )
+      )
+    );
   };
 
   const selectFilter = (filter) => {
@@ -71,6 +87,7 @@ function App() {
               selectedFilterLabel={selectedFilter.label}
               selectedFilterFunction={selectedFilter.filterFunction}
             />
+            <AddButton addFilm={addFilm} />
           </Col>
         </Row>
       </Container>
