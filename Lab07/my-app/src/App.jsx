@@ -44,7 +44,7 @@ function App() {
   const [selectedFilter, setSelectedFilter] = useState(filters["All"]);
 
   const deleteFilm = (id) => {
-    setFilms(films.filter((film) => film.id != id));
+    setFilms((films) => films.filter((film) => film.id != id));
     console.log("deleted " + id);
   };
 
