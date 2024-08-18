@@ -16,7 +16,7 @@ function Films(props) {
             films={props.films}
             deleteFilm={props.deleteFilm}
             editFilm={props.editFilm}
-            selectedFilter={props.selectedFilterFunction}
+            filterFunction={props.selectedFilterFunction}
           />
         </Col>
       </Row>
@@ -38,7 +38,7 @@ function FilmTable(props) {
       <tbody>
         {props.films.map(
           (film) =>
-            props.selectedFilter(film) && (
+            props.filterFunction(film) && (
               <FilmRow
                 film={film}
                 key={film.id}
@@ -66,60 +66,6 @@ function FilmRow(props) {
 }
 
 function FilmData(props) {
-  const emptyStar = <i className="bi bi-star"></i>;
-  const fullStar = <i className="bi bi-star-fill"></i>;
-
-  const stars = {
-    0: {
-      label: "Zero",
-      star: (
-        <div>
-          {emptyStar} {emptyStar} {emptyStar} {emptyStar} {emptyStar}
-        </div>
-      ),
-    },
-    1: {
-      label: "One",
-      star: (
-        <div>
-          {fullStar} {emptyStar} {emptyStar} {emptyStar} {emptyStar}
-        </div>
-      ),
-    },
-    2: {
-      label: "Two",
-      star: (
-        <div>
-          {fullStar} {fullStar} {emptyStar} {emptyStar} {emptyStar}
-        </div>
-      ),
-    },
-    3: {
-      label: "Three",
-      star: (
-        <div>
-          {fullStar} {fullStar} {fullStar} {emptyStar} {emptyStar}
-        </div>
-      ),
-    },
-    4: {
-      label: "Four",
-      star: (
-        <div>
-          {fullStar} {fullStar} {fullStar} {fullStar} {emptyStar}
-        </div>
-      ),
-    },
-    5: {
-      label: "Five",
-      star: (
-        <div>
-          {fullStar} {fullStar} {fullStar} {fullStar} {fullStar}
-        </div>
-      ),
-    },
-  };
-
   return (
     <>
       <td>{props.film.title}</td>
@@ -141,9 +87,20 @@ function FilmData(props) {
       <td>
         {props.film.watchDate && props.film.watchDate.format("MMMM DD, YYYY")}
       </td>
-      <td>{stars[props.film.score].star}</td>
+      <td>
+        <Rating score={props.film.score} maxStar={5} />
+      </td>
     </>
   );
+}
+
+function Rating({ score, maxStar }) {
+  return [...Array(maxStar)].map((el, index) => (
+    <i
+      key={index}
+      className={index < score ? "bi bi-star-fill" : "bi bi-star"}
+    />
+  ));
 }
 
 function FilmActions(props) {
@@ -157,7 +114,7 @@ function FilmActions(props) {
       </td>
       <td>
         <i
-          className="bi bi-trash"
+          className="bi bi-trash "
           onClick={() => props.deleteFilm(props.filmId)}
         ></i>
       </td>
