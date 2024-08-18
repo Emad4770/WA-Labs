@@ -7,12 +7,19 @@ import Film from "./Film.mjs";
 import FilmList from "./components/FilmComponents";
 import { useState } from "react";
 
-const filters = ["All", "Favorite", "Top Rated", "Seen Last Month", "Unseen"];
-const filters2 = {
+const filtersList = [
+  "All",
+  "Favorite",
+  "Top Rated",
+  "Seen Last Month",
+  "Unseen",
+];
+
+const filters = {
   All: { label: "All", filterFunction: (film) => film },
   Favorite: { label: "Favorites", filterFunction: (film) => film.favorite },
   "Top Rated": {
-    label: "Best rated",
+    label: "Top Rated",
     filterFunction: (film) => film.score === 5,
   },
   "Seen Last Month": {
@@ -33,8 +40,7 @@ const editFilm = (id) => {
 
 function App() {
   const [films, setFilms] = useState(filmList);
-  const [selectedFilter, setSelectedFilter] = useState(filters2["All"]);
-  // const [filteredFilms, setFilteredFilms] = useState(filmList);
+  const [selectedFilter, setSelectedFilter] = useState(filters["All"]);
 
   const deleteFilm = (id) => {
     setFilms(films.filter((film) => film.id != id));
@@ -42,15 +48,7 @@ function App() {
   };
 
   const selectFilter = (filter) => {
-    setSelectedFilter(filters2[filter]);
-    // const display = (film) => filters2[filter].filterFunction(film);
-    // const filtered = films.filter((film) =>
-    //   filters2[filter].filterFunction(film)
-    // );
-
-    // setFilteredFilms(filtered);
-    // setFilms(filmList.filter((film) => filteredFilms.includes(film.id)));
-    // console.log("selected: " + filteredFilms);
+    setSelectedFilter(filters[filter]);
   };
 
   return (
@@ -60,7 +58,7 @@ function App() {
         <Row>
           <Col className="col-4 vh-100 bg-light">
             <SideBar
-              filters={filters}
+              filters={filtersList}
               selectedFilter={selectedFilter}
               selectFilter={selectFilter}
             />
