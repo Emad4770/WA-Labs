@@ -1,9 +1,11 @@
-// import React from "react";
-import PropTypes from "prop-types";
-import { Col, Row, Table } from "react-bootstrap";
+/* eslint-disable react/prop-types */
+
+import { Table } from "react-bootstrap";
 
 function SideBar(props) {
-  return <FilterTable filters={props.filters} />;
+  return (
+    <FilterTable filters={props.filters} selectFilter={props.selectFilter} />
+  );
 }
 
 function FilterTable(props) {
@@ -11,7 +13,11 @@ function FilterTable(props) {
     <Table className="table table-hover">
       <tbody>
         {props.filters.map((filter, index) => (
-          <FilterRow filter={filter} key={index} />
+          <FilterRow
+            filter={filter}
+            key={index}
+            selectFilter={props.selectFilter}
+          />
         ))}
       </tbody>
     </Table>
@@ -21,7 +27,7 @@ function FilterTable(props) {
 function FilterRow(props) {
   return (
     <tr>
-      <td>{props.filter}</td>
+      <td onClick={() => props.selectFilter(props.filter)}>{props.filter}</td>
     </tr>
   );
 }

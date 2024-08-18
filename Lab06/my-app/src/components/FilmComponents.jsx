@@ -7,7 +7,7 @@ function Films(props) {
     <>
       <Row>
         <Col>
-          <h1>Filter: All</h1>
+          <h1>Filter: {props.selectedFilterLabel}</h1>
         </Col>
       </Row>
       <Row>
@@ -16,6 +16,7 @@ function Films(props) {
             films={props.films}
             deleteFilm={props.deleteFilm}
             editFilm={props.editFilm}
+            selectedFilter={props.selectedFilterFunction}
           />
         </Col>
       </Row>
@@ -35,14 +36,17 @@ function FilmTable(props) {
         </tr>
       </thead>
       <tbody>
-        {props.films.map((film) => (
-          <FilmRow
-            film={film}
-            key={film.id}
-            deleteFilm={props.deleteFilm}
-            editFilm={props.editFilm}
-          />
-        ))}
+        {props.films.map(
+          (film) =>
+            props.selectedFilter(film) && (
+              <FilmRow
+                film={film}
+                key={film.id}
+                deleteFilm={props.deleteFilm}
+                editFilm={props.editFilm}
+              />
+            )
+        )}
       </tbody>
     </Table>
   );
