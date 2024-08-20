@@ -51,16 +51,16 @@ function App() {
     console.log("deleted " + id);
   };
 
-  const addFilm = (title, favorite, watchDate, score, userId) => {
+  const addFilm = (film) => {
     setFilms((films) =>
       films.concat(
         new Film(
           films.length > 0 ? films[films.length - 1].id + 1 : 1,
-          title,
-          favorite,
-          watchDate,
-          score,
-          userId
+          film.title,
+          film.favorite,
+          film.watchDate,
+          film.score,
+          film.userId
         )
       )
     );
@@ -90,8 +90,7 @@ function App() {
               selectedFilterLabel={selectedFilter.label}
               selectedFilterFunction={selectedFilter.filterFunction}
             />
-            <FilmForm />
-            <AddButton mode={mode} setMode={setMode} addFilm={addFilm} />
+            <FilmForm addFilm={addFilm} />
           </Col>
         </Row>
       </Container>

@@ -1,13 +1,21 @@
 import { useState } from "react";
 import { Button, Form } from "react-bootstrap";
 
-function FilmForm() {
+function FilmForm({ addFilm }) {
   const [title, setTitle] = useState("");
   const [favorite, setFavorite] = useState(false);
   const [date, setDate] = useState("");
   const [score, setScore] = useState(0);
+  const [userId, setUserId] = useState(1);
+
+  const handleSubmit = (event) => {
+    event.preventDefault();
+    const film = { title, favorite, date, score, userId };
+    addFilm(film);
+  };
+
   return (
-    <Form>
+    <Form onSubmit={handleSubmit}>
       <Form.Group>
         <Form.Label>Title</Form.Label>
         <Form.Control
@@ -46,10 +54,14 @@ function FilmForm() {
       </Form.Group>
       <Form.Group>
         <Form.Label>User Id</Form.Label>
-        <Form.Control />
+        <Form.Control
+          type="number"
+          value={userId}
+          onChange={(e) => setUserId(e.target.value)}
+        />
       </Form.Group>
       <br />
-      <Button>Add</Button> <Button>Cancel</Button>
+      <Button type="submit">Add</Button> <Button>Cancel</Button>
     </Form>
   );
 }
