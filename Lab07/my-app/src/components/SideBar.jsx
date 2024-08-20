@@ -24,10 +24,10 @@ function FilterTable(props) {
   );
 }
 
-function FilterRow(props) {
+function FilterRow({ filter, selectFilter }) {
   return (
     <tr>
-      <td onClick={() => props.selectFilter(props.filter)}>{props.filter}</td>
+      <td onClick={() => selectFilter(filter)}>{filter}</td>
     </tr>
   );
 }

@@ -8,6 +8,7 @@ import Film from "./Film.mjs";
 import FilmList from "./components/FilmComponents";
 import { useState } from "react";
 import AddButton from "./components/AddButton";
+import FilmForm from "./components/FilmForm";
 
 const filtersList = [
   "All",
@@ -43,6 +44,7 @@ const editFilm = (id) => {
 function App() {
   const [films, setFilms] = useState(filmList);
   const [selectedFilter, setSelectedFilter] = useState(filters["All"]);
+  const [mode, setMode] = useState("view");
 
   const deleteFilm = (id) => {
     setFilms((films) => films.filter((film) => film.id != id));
@@ -88,7 +90,8 @@ function App() {
               selectedFilterLabel={selectedFilter.label}
               selectedFilterFunction={selectedFilter.filterFunction}
             />
-            <AddButton addFilm={addFilm} />
+            <FilmForm />
+            <AddButton mode={mode} setMode={setMode} addFilm={addFilm} />
           </Col>
         </Row>
       </Container>
