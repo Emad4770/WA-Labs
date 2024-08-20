@@ -39,3 +39,10 @@
 #film-table i.bi.bi-star-fill:hover::before {
     content: "\F588"; /* Unicode for empty star */
 }
+/* Add film button */
+.fixed-right-bottom {
+  position: fixed;
+  right: 1.5rem;
+  bottom: 1.5rem;
+  z-index: 1;
+}

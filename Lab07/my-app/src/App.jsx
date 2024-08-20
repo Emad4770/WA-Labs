@@ -2,12 +2,11 @@ import "bootstrap/dist/css/bootstrap.min.css";
 import "bootstrap-icons/font/bootstrap-icons.css";
 import "./App.css";
 import NavigationBar from "./components/Navigationbar";
-import { Col, Container, Row } from "react-bootstrap";
+import { Col, Container, Row, Button } from "react-bootstrap";
 import SideBar from "./components/SideBar";
 import Film from "./Film.mjs";
 import FilmList from "./components/FilmComponents";
 import { useState } from "react";
-import AddButton from "./components/AddButton";
 import FilmForm from "./components/FilmForm";
 
 const filtersList = [
@@ -58,12 +57,13 @@ function App() {
           films.length > 0 ? films[films.length - 1].id + 1 : 1,
           film.title,
           film.favorite,
-          film.watchDate,
+          film.date,
           film.score,
           film.userId
         )
       )
     );
+    setMode("view");
   };
 
   const selectFilter = (filter) => {
@@ -90,7 +90,16 @@ function App() {
               selectedFilterLabel={selectedFilter.label}
               selectedFilterFunction={selectedFilter.filterFunction}
             />
-            <FilmForm addFilm={addFilm} />
+            <FilmForm addFilm={addFilm} mode={mode} setMode={setMode} />
+            {mode == "view" && (
+              <Button
+                type="primary"
+                className="rounded-circle fixed-right-bottom"
+                onClick={() => setMode("add")}
+              >
+                +
+              </Button>
+            )}
           </Col>
         </Row>
       </Container>
