@@ -1,8 +1,18 @@
 /* eslint-disable react/prop-types */
-import { Table, Row, Col } from "react-bootstrap";
+import { Table, Row, Col, Button } from "react-bootstrap";
+import FilmForm from "./FilmForm";
+import { useState } from "react";
 // import dayjs from "dayjs";
 
 function Films(props) {
+  const [mode, setMode] = useState("view");
+  const [editableFilm, setEditableFilm] = useState();
+
+  const handleEdit = (film) => {
+    setEditableFilm(film);
+    setMode("edit");
+  };
+
   return (
     <>
       <Row>
@@ -15,42 +25,71 @@ function Films(props) {
           <FilmTable
             films={props.films}
             deleteFilm={props.deleteFilm}
-            editFilm={props.editFilm}
             filterFunction={props.selectedFilterFunction}
+            handleEdit={handleEdit}
           />
         </Col>
       </Row>
+      {mode === "add" && (
+        <FilmForm
+          mode={mode}
+          cancel={() => setMode("view")}
+          addFilm={(film) => {
+            props.addFilm(film);
+            setMode("view");
+          }}
+        />
+      )}
+      {mode === "edit" && (
+        <FilmForm
+          mode={mode}
+          cancel={() => setMode("view")}
+          editableFilm={editableFilm}
+          editFilm={(film) => {
+            props.editFilm(film);
+            setMode("view");
+          }}
+        />
+      )}
+      {mode == "view" && (
+        <Button
+          type="primary"
+          className="rounded-circle fixed-right-bottom"
+          onClick={() => setMode("add")}
+        >
+          +
+        </Button>
+      )}
     </>
   );
 }
 
 function FilmTable(props) {
   return (
-    props.films.length > 0 && (
-      <Table className="table-hover" striped id="film-table">
-        <thead>
-          <tr>
-            <th>Title</th>
-            <th>Favorite</th>
-            <th>Watch Date</th>
-            <th>Rating</th>
-          </tr>
-        </thead>
-        <tbody>
-          {props.films.map(
-            (film) =>
-              props.filterFunction(film) && (
-                <FilmRow
-                  film={film}
-                  key={film.id}
-                  deleteFilm={props.deleteFilm}
-                  editFilm={props.editFilm}
-                />
-              )
-          )}
-        </tbody>
-      </Table>
-    )
+    <Table className="table-hover" striped id="film-table">
+      <thead>
+        <tr>
+          <th>Title</th>
+          <th>Favorite</th>
+          <th>Watch Date</th>
+          <th>Rating</th>
+        </tr>
+      </thead>
+      <tbody>
+        {props.films.map(
+          (film) =>
+            props.filterFunction(film) && (
+              <FilmRow
+                film={film}
+                key={film.id}
+                deleteFilm={props.deleteFilm}
+                editFilm={props.editFilm}
+                handleEdit={props.handleEdit}
+              />
+            )
+        )}
+      </tbody>
+    </Table>
   );
 }
 
@@ -59,9 +98,10 @@ function FilmRow(props) {
     <tr>
       <FilmData film={props.film} />
       <FilmActions
-        filmId={props.film.id}
+        film={props.film}
         deleteFilm={props.deleteFilm}
         editFilm={props.editFilm}
+        handleEdit={props.handleEdit}
       />
     </tr>
   );
@@ -111,13 +151,13 @@ function FilmActions(props) {
       <td>
         <i
           className="bi bi-pencil-square"
-          onClick={() => props.editFilm(props.filmId)}
+          onClick={() => props.handleEdit(props.film)}
         ></i>
       </td>
       <td>
         <i
           className="bi bi-trash "
-          onClick={() => props.deleteFilm(props.filmId)}
+          onClick={() => props.deleteFilm(props.film.id)}
         ></i>
       </td>
     </>

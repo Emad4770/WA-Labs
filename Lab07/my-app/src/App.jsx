@@ -5,7 +5,7 @@ import NavigationBar from "./components/Navigationbar";
 import { Col, Container, Row, Button } from "react-bootstrap";
 import SideBar from "./components/SideBar";
 import Film from "./Film.mjs";
-import FilmList from "./components/FilmComponents";
+import FilmComponents from "./components/FilmComponents";
 import { useState } from "react";
 import FilmForm from "./components/FilmForm";
 
@@ -36,34 +36,47 @@ const film3 = new Film(3, "21Grams", true, "2022-09-10", 1, 2);
 const film4 = new Film(4, "Spiderman", true, "2024-08-10", 5, 2);
 const filmList = [film1, film2, film3, film4];
 
-const editFilm = (id) => {
-  console.log("edited " + id);
-};
-
 function App() {
   const [films, setFilms] = useState(filmList);
   const [selectedFilter, setSelectedFilter] = useState(filters["All"]);
-  const [mode, setMode] = useState("view");
+  // const [mode, setMode] = useState("view");
+  // const [selectedFilmId, setSelectedFilmId] = useState("");
 
   const deleteFilm = (id) => {
     setFilms((films) => films.filter((film) => film.id != id));
     console.log("deleted " + id);
   };
+  const editFilm = (film) => {
+    console.log("edited " + film.id);
+    setFilms((oldFilms) => {
+      oldFilms.map((f) => {
+        if (f.id === film.id) {
+          return new Film(
+            film.id,
+            film.title,
+            film.favorite,
+            film.watchDate,
+            film.score,
+            film.userId
+          );
+        } else return f;
+      });
+    });
+  };
 
   const addFilm = (film) => {
-    setFilms((films) =>
-      films.concat(
-        new Film(
-          films.length > 0 ? films[films.length - 1].id + 1 : 1,
-          film.title,
-          film.favorite,
-          film.date,
-          film.score,
-          film.userId
-        )
-      )
-    );
-    setMode("view");
+    setFilms((oldFilms) => {
+      const newId = Math.max(...oldFilms.map((film) => film.id)) + 1;
+      const newFilm = new Film(
+        newId,
+        film.title,
+        film.favorite,
+        film.watchDate,
+        film.score,
+        film.userId
+      );
+      return [...oldFilms, newFilm];
+    });
   };
 
   const selectFilter = (filter) => {
@@ -83,23 +96,14 @@ function App() {
             />
           </Col>
           <Col className="col-8">
-            <FilmList
+            <FilmComponents
               films={films}
+              addFilm={addFilm}
               deleteFilm={deleteFilm}
               editFilm={editFilm}
               selectedFilterLabel={selectedFilter.label}
               selectedFilterFunction={selectedFilter.filterFunction}
             />
-            <FilmForm addFilm={addFilm} mode={mode} setMode={setMode} />
-            {mode == "view" && (
-              <Button
-                type="primary"
-                className="rounded-circle fixed-right-bottom"
-                onClick={() => setMode("add")}
-              >
-                +
-              </Button>
-            )}
           </Col>
         </Row>
       </Container>
