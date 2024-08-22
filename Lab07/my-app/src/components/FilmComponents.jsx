@@ -45,8 +45,8 @@ function Films(props) {
           mode={mode}
           cancel={() => setMode("view")}
           editableFilm={editableFilm}
-          editFilm={(film) => {
-            props.editFilm(film);
+          updateFilms={(film) => {
+            props.updateFilms(film);
             setMode("view");
           }}
         />
@@ -76,6 +76,7 @@ function FilmTable(props) {
         </tr>
       </thead>
       <tbody>
+        {/* {console.log(props.films)} */}
         {props.films.map(
           (film) =>
             props.filterFunction(film) && (

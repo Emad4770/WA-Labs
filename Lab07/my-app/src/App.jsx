@@ -46,10 +46,10 @@ function App() {
     setFilms((films) => films.filter((film) => film.id != id));
     console.log("deleted " + id);
   };
-  const editFilm = (film) => {
-    console.log("edited " + film.id);
+  const updateFilms = (film) => {
+    // console.log("edited " + film.id);
     setFilms((oldFilms) => {
-      oldFilms.map((f) => {
+      return oldFilms.map((f) => {
         if (f.id === film.id) {
           return new Film(
             film.id,
@@ -100,7 +100,7 @@ function App() {
               films={films}
               addFilm={addFilm}
               deleteFilm={deleteFilm}
-              editFilm={editFilm}
+              updateFilms={updateFilms}
               selectedFilterLabel={selectedFilter.label}
               selectedFilterFunction={selectedFilter.filterFunction}
             />

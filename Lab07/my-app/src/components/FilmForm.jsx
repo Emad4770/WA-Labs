@@ -3,23 +3,24 @@ import dayjs from "dayjs";
 import { useState } from "react";
 import { Button, Form } from "react-bootstrap";
 
-function FilmForm({ addFilm, editableFilm, editFilm, mode, cancel }) {
+function FilmForm({ addFilm, editableFilm, updateFilms, mode, cancel }) {
   const [title, setTitle] = useState(editableFilm ? editableFilm.title : "");
   const [favorite, setFavorite] = useState(
     editableFilm ? editableFilm.favorite : false
   );
   const [watchDate, setWatchDate] = useState(
-    editableFilm ? editableFilm.watchDate?.format("YYYY-MM-DD") : ""
+    editableFilm && editableFilm.watchDate
+      ? editableFilm.watchDate.format("YYYY-MM-DD")
+      : ""
   );
   const [score, setScore] = useState(editableFilm ? editableFilm.score : 0);
   const [userId, setUserId] = useState(editableFilm ? editableFilm.userId : 1);
 
   const handleSubmit = (event) => {
-    // const cleanWatchDate = watchDate || "";
     event.preventDefault();
     const film = { title, favorite, watchDate, score, userId };
     if (editableFilm) {
-      editFilm({ id: film.id, ...film });
+      updateFilms({ id: editableFilm.id, ...film });
     } else {
       addFilm(film);
     }
