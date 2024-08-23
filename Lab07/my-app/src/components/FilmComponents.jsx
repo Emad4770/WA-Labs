@@ -42,6 +42,7 @@ function Films(props) {
       )}
       {mode === "edit" && (
         <FilmForm
+          key={editableFilm.id}
           mode={mode}
           cancel={() => setMode("view")}
           editableFilm={editableFilm}
