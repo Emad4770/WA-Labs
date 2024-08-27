@@ -1,10 +1,16 @@
 /* eslint-disable react/prop-types */
-import dayjs from "dayjs";
 import { useState } from "react";
 import { Button, Container, Form } from "react-bootstrap";
-import { useNavigate } from "react-router-dom";
+import { useNavigate, useParams } from "react-router-dom";
 
-function FilmForm({ addFilm, editableFilm, updateFilms, mode, cancel }) {
+function FilmForm({ films, addFilm, updateFilms, mode }) {
+  const navigate = useNavigate();
+  const params = useParams();
+  const filmId = params.filmId;
+
+  const editableFilm =
+    films && films.find((film) => film.id === parseInt(filmId));
+
   const [title, setTitle] = useState(editableFilm ? editableFilm.title : "");
   const [favorite, setFavorite] = useState(
     editableFilm ? editableFilm.favorite : false
@@ -16,8 +22,6 @@ function FilmForm({ addFilm, editableFilm, updateFilms, mode, cancel }) {
   );
   const [score, setScore] = useState(editableFilm ? editableFilm.score : 0);
   const [userId, setUserId] = useState(editableFilm ? editableFilm.userId : 1);
-
-  const navigate = useNavigate();
 
   const handleSubmit = (event) => {
     event.preventDefault();

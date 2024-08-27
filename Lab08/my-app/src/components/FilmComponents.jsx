@@ -1,20 +1,29 @@
 /* eslint-disable react/prop-types */
 import { Table, Row, Col, Button } from "react-bootstrap";
-import FilmForm from "./FilmForm";
-import { useState } from "react";
-import { useNavigate, useParams } from "react-router-dom";
+import { useNavigate, useSearchParams } from "react-router-dom";
 // import dayjs from "dayjs";
 
+const filters = {
+  all: { label: "All", filterFunction: (film) => film },
+  favorite: { label: "Favorites", filterFunction: (film) => film.favorite },
+  top: {
+    label: "Top Rated",
+    filterFunction: (film) => film.score === 5,
+  },
+  "seen-last": {
+    label: "Seen Last Month",
+    filterFunction: (film) => film.watchDate > "2023-01-01",
+  },
+  unseen: { label: "Unseen Films", filterFunction: (film) => !film.watchDate },
+};
+
 function Films(props) {
-  const [mode, setMode] = useState("view");
-  const [editableFilm, setEditableFilm] = useState();
   const navigate = useNavigate();
-  const params = useParams();
-  // const filmId = params.filmId;
+  const [searchParam] = useSearchParams();
+
+  const selectedFilter = searchParam.get("filter") || "all";
 
   const handleEdit = (film) => {
-    setEditableFilm(film);
-    setMode("edit");
     navigate(`/films/${film.id}/edit`);
   };
 
@@ -22,7 +31,7 @@ function Films(props) {
     <>
       <Row>
         <Col>
-          <h1>Filter: {props.selectedFilterLabel}</h1>
+          <h1>Filter: {filters[selectedFilter]?.label}</h1>
         </Col>
       </Row>
       <Row>
@@ -30,47 +39,24 @@ function Films(props) {
           <FilmTable
             films={props.films}
             deleteFilm={props.deleteFilm}
-            filterFunction={props.selectedFilterFunction}
+            selectedFilter={selectedFilter}
             handleEdit={handleEdit}
           />
         </Col>
       </Row>
-      {mode === "add" && (
-        <FilmForm
-          mode={mode}
-          cancel={() => setMode("view")}
-          addFilm={(film) => {
-            props.addFilm(film);
-            setMode("view");
-          }}
-        />
-      )}
-      {mode === "edit" && (
-        <FilmForm
-          key={editableFilm.id}
-          mode={mode}
-          cancel={() => setMode("view")}
-          editableFilm={editableFilm}
-          updateFilms={(film) => {
-            props.updateFilms(film);
-            setMode("view");
-          }}
-        />
-      )}
-      {mode == "view" && (
-        <Button
-          type="primary"
-          className="rounded-circle fixed-right-bottom"
-          onClick={() => navigate("/films/add")}
-        >
-          +
-        </Button>
-      )}
+
+      <Button
+        type="primary"
+        className="rounded-circle fixed-right-bottom"
+        onClick={() => navigate("/films/add")}
+      >
+        +
+      </Button>
     </>
   );
 }
 
-function FilmTable(props) {
+function FilmTable({ selectedFilter, ...props }) {
   return (
     <Table className="table-hover" striped id="film-table">
       <thead>
@@ -85,12 +71,11 @@ function FilmTable(props) {
         {/* {console.log(props.films)} */}
         {props.films.map(
           (film) =>
-            props.filterFunction(film) && (
+            filters[selectedFilter].filterFunction(film) && (
               <FilmRow
                 film={film}
                 key={film.id}
                 deleteFilm={props.deleteFilm}
-                editFilm={props.editFilm}
                 handleEdit={props.handleEdit}
               />
             )
@@ -107,7 +92,6 @@ function FilmRow(props) {
       <FilmActions
         film={props.film}
         deleteFilm={props.deleteFilm}
-        editFilm={props.editFilm}
         handleEdit={props.handleEdit}
       />
     </tr>

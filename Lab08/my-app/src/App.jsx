@@ -10,26 +10,18 @@ import { useState } from "react";
 import FilmForm from "./components/FilmForm";
 import { Route, Routes } from "react-router-dom";
 
-const filtersList = [
-  "All",
-  "Favorite",
-  "Top Rated",
-  "Seen Last Month",
-  "Unseen",
-];
-
 const filters = {
-  All: { label: "All", filterFunction: (film) => film },
-  Favorite: { label: "Favorites", filterFunction: (film) => film.favorite },
-  "Top Rated": {
+  all: { label: "All", filterFunction: (film) => film },
+  favorite: { label: "Favorites", filterFunction: (film) => film.favorite },
+  best: {
     label: "Top Rated",
     filterFunction: (film) => film.score === 5,
   },
-  "Seen Last Month": {
+  "last-month": {
     label: "Seen Last Month",
     filterFunction: (film) => film.watchDate > "2023-01-01",
   },
-  Unseen: { label: "Unseen", filterFunction: (film) => !film.watchDate },
+  unseen: { label: "Unseen", filterFunction: (film) => !film.watchDate },
 };
 const film1 = new Film(1, "Godfather", true, "2024-01-20", 0, 1);
 const film2 = new Film(2, "Matrix", false, null, 4, 1);
@@ -96,9 +88,9 @@ function App() {
               <Row>
                 <Col className="col-4 vh-100 bg-light">
                   <SideBar
-                    filters={filtersList}
-                    selectedFilter={selectedFilter}
-                    selectFilter={selectFilter}
+                    filters={filters}
+                    // selectedFilter={selectedFilter}
+                    // selectFilter={selectFilter}
                   />
                 </Col>
                 <Col className="col-8">
@@ -107,8 +99,8 @@ function App() {
                     addFilm={addFilm}
                     deleteFilm={deleteFilm}
                     updateFilms={updateFilms}
-                    selectedFilterLabel={selectedFilter.label}
-                    selectedFilterFunction={selectedFilter.filterFunction}
+                    // selectedFilterLabel={selectedFilter.label}
+                    // selectedFilterFunction={selectedFilter.filterFunction}
                   />
                 </Col>
               </Row>
@@ -122,7 +114,9 @@ function App() {
         />
         <Route
           path="/films/:filmId/edit"
-          element={<FilmForm updateFilms={updateFilms} mode={"edit"} />}
+          element={
+            <FilmForm films={films} updateFilms={updateFilms} mode={"edit"} />
+          }
         />
       </Routes>
       {/* <Container>

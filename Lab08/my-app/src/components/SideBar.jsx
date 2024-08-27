@@ -1,33 +1,33 @@
 /* eslint-disable react/prop-types */
 
 import { Table } from "react-bootstrap";
+import { NavLink } from "react-router-dom";
 
 function SideBar(props) {
-  return (
-    <FilterTable filters={props.filters} selectFilter={props.selectFilter} />
-  );
+  return <FilterTable filters={props.filters} />;
 }
 
 function FilterTable(props) {
+  const filtersArray = Object.entries(props.filters);
   return (
     <Table className="table table-hover">
       <tbody>
-        {props.filters.map((filter, index) => (
-          <FilterRow
-            filter={filter}
-            key={index}
-            selectFilter={props.selectFilter}
-          />
+        {filtersArray.map(([query, filter], index) => (
+          <FilterRow label={filter.label} query={query} key={index} />
         ))}
       </tbody>
     </Table>
   );
 }
 
-function FilterRow({ filter, selectFilter }) {
+function FilterRow({ label, query }) {
   return (
     <tr>
-      <td onClick={() => selectFilter(filter)}>{filter}</td>
+      <td>
+        <NavLink to={`/films?filter=${query}`} activeClassName="active">
+          {label}
+        </NavLink>
+      </td>
     </tr>
   );
 }
