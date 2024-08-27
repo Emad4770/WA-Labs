@@ -3,21 +3,7 @@ import { Table, Row, Col, Button } from "react-bootstrap";
 import { useNavigate, useSearchParams } from "react-router-dom";
 // import dayjs from "dayjs";
 
-const filters = {
-  all: { label: "All", filterFunction: (film) => film },
-  favorite: { label: "Favorites", filterFunction: (film) => film.favorite },
-  top: {
-    label: "Top Rated",
-    filterFunction: (film) => film.score === 5,
-  },
-  "seen-last": {
-    label: "Seen Last Month",
-    filterFunction: (film) => film.watchDate > "2023-01-01",
-  },
-  unseen: { label: "Unseen Films", filterFunction: (film) => !film.watchDate },
-};
-
-function Films(props) {
+function Films({ filters, ...props }) {
   const navigate = useNavigate();
   const [searchParam] = useSearchParams();
 
@@ -27,7 +13,9 @@ function Films(props) {
     navigate(`/films/${film.id}/edit`);
   };
 
-  return (
+  return !filters[selectedFilter] ? (
+    <h1>Wrong Filter Parameter</h1>
+  ) : (
     <>
       <Row>
         <Col>
@@ -40,6 +28,7 @@ function Films(props) {
             films={props.films}
             deleteFilm={props.deleteFilm}
             selectedFilter={selectedFilter}
+            filters={filters}
             handleEdit={handleEdit}
           />
         </Col>
@@ -56,7 +45,7 @@ function Films(props) {
   );
 }
 
-function FilmTable({ selectedFilter, ...props }) {
+function FilmTable({ selectedFilter, filters, ...props }) {
   return (
     <Table className="table-hover" striped id="film-table">
       <thead>
@@ -71,7 +60,7 @@ function FilmTable({ selectedFilter, ...props }) {
         {/* {console.log(props.films)} */}
         {props.films.map(
           (film) =>
-            filters[selectedFilter].filterFunction(film) && (
+            filters[selectedFilter]?.filterFunction(film) && (
               <FilmRow
                 film={film}
                 key={film.id}

@@ -24,9 +24,7 @@ function FilterRow({ label, query }) {
   return (
     <tr>
       <td>
-        <NavLink to={`/films?filter=${query}`} activeClassName="active">
-          {label}
-        </NavLink>
+        <NavLink to={`/?filter=${query}`}>{label}</NavLink>
       </td>
     </tr>
   );

@@ -2,7 +2,7 @@ import "bootstrap/dist/css/bootstrap.min.css";
 import "bootstrap-icons/font/bootstrap-icons.css";
 import "./App.css";
 import NavigationBar from "./components/Navigationbar";
-import { Col, Container, Row, Button } from "react-bootstrap";
+import { Col, Container, Row } from "react-bootstrap";
 import SideBar from "./components/SideBar";
 import Film from "./Film.mjs";
 import FilmComponents from "./components/FilmComponents";
@@ -31,16 +31,12 @@ const filmList = [film1, film2, film3, film4];
 
 function App() {
   const [films, setFilms] = useState(filmList);
-  const [selectedFilter, setSelectedFilter] = useState(filters["All"]);
-  // const [mode, setMode] = useState("view");
-  // const [selectedFilmId, setSelectedFilmId] = useState("");
 
   const deleteFilm = (id) => {
     setFilms((films) => films.filter((film) => film.id != id));
     console.log("deleted " + id);
   };
   const updateFilms = (film) => {
-    // console.log("edited " + film.id);
     setFilms((oldFilms) => {
       return oldFilms.map((f) => {
         if (f.id === film.id) {
@@ -72,10 +68,6 @@ function App() {
     });
   };
 
-  const selectFilter = (filter) => {
-    setSelectedFilter(filters[filter]);
-  };
-
   return (
     <>
       <NavigationBar />
@@ -87,11 +79,7 @@ function App() {
             <Container>
               <Row>
                 <Col className="col-4 vh-100 bg-light">
-                  <SideBar
-                    filters={filters}
-                    // selectedFilter={selectedFilter}
-                    // selectFilter={selectFilter}
-                  />
+                  <SideBar filters={filters} />
                 </Col>
                 <Col className="col-8">
                   <FilmComponents
@@ -99,8 +87,7 @@ function App() {
                     addFilm={addFilm}
                     deleteFilm={deleteFilm}
                     updateFilms={updateFilms}
-                    // selectedFilterLabel={selectedFilter.label}
-                    // selectedFilterFunction={selectedFilter.filterFunction}
+                    filters={filters}
                   />
                 </Col>
               </Row>
@@ -118,6 +105,8 @@ function App() {
             <FilmForm films={films} updateFilms={updateFilms} mode={"edit"} />
           }
         />
+
+        <Route path="/*" element={<h1>Not Found</h1>} />
       </Routes>
       {/* <Container>
         <Row>
