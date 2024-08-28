@@ -13,23 +13,6 @@ import API from "./api/API";
 
 const api = new API();
 
-// const filters = {
-//   all: { label: "All", filterFunction: (film) => film },
-//   favorite: {
-//     label: "Favorites",
-//     filterFunction: (film) => film.favorite,
-//   },
-//   best: {
-//     label: "Top Rated",
-//     filterFunction: (film) => film.score === 5,
-//   },
-//   "last-month": {
-//     label: "Seen Last Month",
-//     filterFunction: (film) => film.watchDate > "2023-01-01",
-//   },
-//   unseen: { label: "Unseen", filterFunction: (film) => !film.watchDate },
-// };
-
 const filters = {
   "filter-all": { label: "All" },
   "filter-favorite": { label: "Favorites" },
@@ -37,11 +20,6 @@ const filters = {
   "filter-lastmonth": { label: "Seen in last month" },
   "filter-unseen": { label: "Unseen films" },
 };
-// const film1 = new Film(1, "Godfather", true, "2024-01-20", 0, 1);
-// const film2 = new Film(2, "Matrix", false, null, 4, 1);
-// const film3 = new Film(3, "21Grams", true, "2022-09-10", 1, 2);
-// const film4 = new Film(4, "Spiderman", true, "2024-08-10", 5, 2);
-// const filmList = [film1, film2, film3, film4];
 
 function App() {
   const [films, setFilms] = useState([]);

@@ -18,11 +18,11 @@ POST http://localhost:3000/api/films HTTP/1.1
 content-type: application/json
 
 {
-    "title": "Guardians of the Galaxy Vol.3",
+    "title": "Silence of the Lambs",
     "favorite": true,
     "watchDate": "{{$datetime 'YYYY-MM-DD' -15 d }}",
-    "rating": 4,
-    "userId": 0
+    "rating": 5,
+    "userId": 1
 }
 ###
 ## Create new film (with all the fields except ID)
