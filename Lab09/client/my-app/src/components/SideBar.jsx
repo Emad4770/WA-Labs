@@ -2,10 +2,6 @@
 
 import { Table } from "react-bootstrap";
 import { NavLink } from "react-router-dom";
-import API from "../api/API";
-import Film from "../Film.mjs";
-
-const api = new API();
 
 function SideBar(props) {
   return <FilterTable filters={props.filters} setQuery={props.setQuery} />;
