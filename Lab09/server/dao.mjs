@@ -19,7 +19,7 @@ function isSeenLastMonth(film) {
         return seen
     }
 }
-console.log('filter: ' + filters["filter-lastmonth"].filterFunction(film1))
+// console.log('filter: ' + filters["filter-lastmonth"].filterFunction(film1))
 
 function rowsToFilm(rows) {
     const films = rows.map((row) => {
@@ -91,7 +91,7 @@ export default function FilmDao() {
         const score = (film.score && film.score <= 5 && film.score >= 0) ? film.score : null
         const watchDate = film.watchDate ? film.watchDate.format("YYYY-MM-DD") : null;
         const userId = ("userId" in film && film.userId) ? film.userId : null;
-        console.log(userId)
+        // console.log(userId)
         return new Promise((resolve, reject) => {
             const sql = `SELECT u.id FROM users u, films f
         WHERE u.id = f.userId AND f.userId = ?`;
@@ -149,7 +149,7 @@ export default function FilmDao() {
                     const sql = `UPDATE films SET 
                 title = ?, isFavorite = ?,rating = ?, watchDate=?, userId=?
                 WHERE id = ?`;
-                    console.log(film.id);
+                    // console.log(film.id);
                     db.run(
                         sql,
                         [

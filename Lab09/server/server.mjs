@@ -6,14 +6,17 @@ import utc from 'dayjs/plugin/utc.js'
 import Film from './Film.mjs'
 import { check, body, param, validationResult, checkSchema } from 'express-validator';
 import FilmDao from './dao.mjs';
+import cors from 'cors';
 
 dayjs.extend(utc)
 const app = express();
 const filmDao = new FilmDao();
 
+const port = 3000
+
 app.use(morgan('common'))
 app.use(express.json())
-
+app.use(cors())
 
 // This function is used to handle validation errors
 const onValidationErrors = (validationResult, res) => {
@@ -49,44 +52,6 @@ app.get('/api/films', async (req, res) => {
 
 })
 
-// Get all the favorite films
-// app.get('/films/favorites', (req, res) => {
-//     getFavoriteFilms().then((f) => {
-//         res.json(f)
-//     }).catch((err) => {
-//         res.status(500).json({ error: err.message })
-//     })
-// })
-
-// Get best rated films
-// app.get('/films/tops', (req, res) => {
-//     getTopRated().then((f) => {
-//         res.json(f)
-//     }).catch((err) => {
-//         res.status(500).json({ error: err.message })
-//     })
-// })
-
-// Get films watched in the last month
-// app.get('/films/lastmonth', (req, res) => {
-//     const currentDate = dayjs.utc()
-//     const lastMonth = currentDate.subtract(1, 'month')
-//     getLatestFilms(currentDate, lastMonth).then((f) => {
-//         res.json(f)
-//     }).catch((err) => {
-//         res.status(500).json({ error: err.message })
-//     })
-// })
-
-// Get all unseen films
-// app.get('/films/unseen', (req, res) => {
-//     getUnseenFilms().then((f) => {
-//         res.json(f)
-//     }).catch((err) => {
-//         res.status(500).json({ error: err.message })
-//     })
-
-// })
 
 // 2. Retrieve a film, given its "id".
 // GET /api/films/<id>
@@ -191,6 +156,6 @@ app.delete('/api/films/:id', param('id').isInt(), (req, res) => {
 
 
 
-app.listen(3000, () => {
-    console.log("Server is running!");
+app.listen(port, () => {
+    console.log(`Server is running at http://localhost:${port}`);
 })
