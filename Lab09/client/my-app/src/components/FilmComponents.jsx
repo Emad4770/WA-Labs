@@ -7,7 +7,7 @@ function Films({ filters, ...props }) {
   const navigate = useNavigate();
   const [searchParam] = useSearchParams();
 
-  const selectedFilter = searchParam.get("filter") || "all";
+  const selectedFilter = searchParam.get("filter") || "filter-all";
 
   const handleEdit = (film) => {
     navigate(`/films/${film.id}/edit`);
@@ -45,7 +45,7 @@ function Films({ filters, ...props }) {
   );
 }
 
-function FilmTable({ selectedFilter, filters, ...props }) {
+function FilmTable(props) {
   return (
     <Table className="table-hover" striped id="film-table">
       <thead>
@@ -57,18 +57,15 @@ function FilmTable({ selectedFilter, filters, ...props }) {
         </tr>
       </thead>
       <tbody>
-        {console.log(props.films)}
-        {props.films.map(
-          (film) =>
-            filters[selectedFilter]?.filterFunction(film) && (
-              <FilmRow
-                film={film}
-                key={film.id}
-                deleteFilm={props.deleteFilm}
-                handleEdit={props.handleEdit}
-              />
-            )
-        )}
+        {/* {console.log(props.films)} */}
+        {props.films.map((film) => (
+          <FilmRow
+            film={film}
+            key={film.id}
+            deleteFilm={props.deleteFilm}
+            handleEdit={props.handleEdit}
+          />
+        ))}
       </tbody>
     </Table>
   );

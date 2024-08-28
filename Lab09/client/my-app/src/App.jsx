@@ -13,21 +13,29 @@ import API from "./api/API";
 
 const api = new API();
 
+// const filters = {
+//   all: { label: "All", filterFunction: (film) => film },
+//   favorite: {
+//     label: "Favorites",
+//     filterFunction: (film) => film.favorite,
+//   },
+//   best: {
+//     label: "Top Rated",
+//     filterFunction: (film) => film.score === 5,
+//   },
+//   "last-month": {
+//     label: "Seen Last Month",
+//     filterFunction: (film) => film.watchDate > "2023-01-01",
+//   },
+//   unseen: { label: "Unseen", filterFunction: (film) => !film.watchDate },
+// };
+
 const filters = {
-  all: { label: "All", filterFunction: (film) => film },
-  favorite: {
-    label: "Favorites",
-    filterFunction: (film) => film.favorite,
-  },
-  best: {
-    label: "Top Rated",
-    filterFunction: (film) => film.score === 5,
-  },
-  "last-month": {
-    label: "Seen Last Month",
-    filterFunction: (film) => film.watchDate > "2023-01-01",
-  },
-  unseen: { label: "Unseen", filterFunction: (film) => !film.watchDate },
+  "filter-all": { label: "All" },
+  "filter-favorite": { label: "Favorites" },
+  "filter-best": { label: "Top rated" },
+  "filter-lastmonth": { label: "Seen in last month" },
+  "filter-unseen": { label: "Unseen films" },
 };
 // const film1 = new Film(1, "Godfather", true, "2024-01-20", 0, 1);
 // const film2 = new Film(2, "Matrix", false, null, 4, 1);
@@ -40,8 +48,8 @@ function App() {
 
   useEffect(() => {
     async function loadFilms() {
-      const films = await api.loadFilms();
-      const filmList = films.map(
+      const loadedFilms = await api.loadFilms();
+      const filmList = loadedFilms.map(
         (film) =>
           new Film(
             film.id,
@@ -109,7 +117,7 @@ function App() {
             <Container>
               <Row>
                 <Col className="col-4 vh-100 bg-light">
-                  <SideBar filters={filters} />
+                  <SideBar filters={filters} setFilms={setFilms} />
                 </Col>
                 <Col className="col-8">
                   <FilmComponents
