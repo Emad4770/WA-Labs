@@ -1,17 +1,27 @@
 
 const URL = 'http://localhost:3000/api/';
 
-export default function API() {
+export class API {
 
-    this.loadFilms = async (filter) => {
+    async loadFilms(filter) {
 
-        const query = filter ? `?filter=${filter}` : ''
+        try {
+            const query = filter ? `?filter=${filter}` : '';
+            const response = await fetch(`${URL}films${query}`);
+            if (!response.ok) {
+                throw Error(response.statusText);
+            }
+            let type = response.headers.get('Content-Type');
+            if (type !== 'application/json') {
+                throw new TypeError(`Expected JSON, got ${type}`);
+            }
+            const films = await response.json();
+            return films;
 
-        const response = await fetch(`${URL}films${query}`)
-        const films = await response.json()
-        return films
-
-    }
+        } catch (error) {
+            console.error(error);
+        }
+    };
 
 }
 
