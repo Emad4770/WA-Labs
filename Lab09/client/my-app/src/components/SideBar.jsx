@@ -8,7 +8,7 @@ import Film from "../Film.mjs";
 const api = new API();
 
 function SideBar(props) {
-  return <FilterTable filters={props.filters} setFilms={props.setFilms} />;
+  return <FilterTable filters={props.filters} setQuery={props.setQuery} />;
 }
 
 function FilterTable(props) {
@@ -21,7 +21,7 @@ function FilterTable(props) {
             label={filter.label}
             query={query}
             key={index}
-            setFilms={props.setFilms}
+            setQuery={props.setQuery}
           />
         ))}
       </tbody>
@@ -29,31 +29,11 @@ function FilterTable(props) {
   );
 }
 
-async function loadFilms(filter) {
-  const films = await api.loadFilms(filter);
-  const filmList = films.map(
-    (film) =>
-      new Film(
-        film.id,
-        film.title,
-        film.favorite,
-        film.watchDate,
-        film.score,
-        film.userId
-      )
-  );
-
-  return filmList;
-}
-
-function FilterRow({ label, query, setFilms }) {
+function FilterRow({ label, query, setQuery }) {
   return (
     <tr>
       <td>
-        <NavLink
-          to={`/?filter=${query}`}
-          onClick={() => loadFilms(query).then((films) => setFilms(films))}
-        >
+        <NavLink to={`/?filter=${query}`} onClick={() => setQuery(query)}>
           {label}
         </NavLink>
       </td>

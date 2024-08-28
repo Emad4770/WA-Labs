@@ -45,10 +45,11 @@ const filters = {
 
 function App() {
   const [films, setFilms] = useState([]);
+  const [query, setQuery] = useState("");
 
   useEffect(() => {
     async function loadFilms() {
-      const loadedFilms = await api.loadFilms();
+      const loadedFilms = await api.loadFilms(query);
       const filmList = loadedFilms.map(
         (film) =>
           new Film(
@@ -64,7 +65,7 @@ function App() {
       setFilms(filmList);
     }
     loadFilms();
-  }, []);
+  }, [query]);
 
   const deleteFilm = (id) => {
     setFilms((films) => films.filter((film) => film.id != id));
@@ -117,7 +118,7 @@ function App() {
             <Container>
               <Row>
                 <Col className="col-4 vh-100 bg-light">
-                  <SideBar filters={filters} setFilms={setFilms} />
+                  <SideBar filters={filters} setQuery={setQuery} />
                 </Col>
                 <Col className="col-8">
                   <FilmComponents
