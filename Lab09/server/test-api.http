@@ -69,7 +69,7 @@ content-type: application/json
 
 
 ## Updates film favorite property.
-PUT http://localhost:3000/api/films/1/favorite HTTP/1.1
+PUT http://localhost:3000/api/films/3/favorite HTTP/1.1
 content-type: application/json
 
 {

@@ -4,7 +4,7 @@ import morgan from 'morgan';
 import dayjs from 'dayjs';
 import utc from 'dayjs/plugin/utc.js'
 import Film from './Film.mjs'
-import { check, body, param, validationResult, checkSchema } from 'express-validator';
+import { check, param, validationResult } from 'express-validator';
 import FilmDao from './dao.mjs';
 import cors from 'cors';
 

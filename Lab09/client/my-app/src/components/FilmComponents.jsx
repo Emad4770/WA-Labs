@@ -57,7 +57,7 @@ function FilmTable({ selectedFilter, filters, ...props }) {
         </tr>
       </thead>
       <tbody>
-        {/* {console.log(props.films)} */}
+        {console.log(props.films)}
         {props.films.map(
           (film) =>
             filters[selectedFilter]?.filterFunction(film) && (
@@ -96,18 +96,17 @@ function FilmData(props) {
           <input
             className="form-check-input"
             type="checkbox"
-            value={props.film.favorite}
-            id={props.film.id}
+            // value={props.film.favorite}
+            // id={props.film.id}
             checked={props.film.favorite}
             disabled
           ></input>
-          <label className="form-check-label" htmlFor={props.film.id}>
-            Favorite
-          </label>
+          <label className="form-check-label">Favorite</label>
         </div>
       </td>
       <td>
         {props.film.watchDate && props.film.watchDate.format("MMMM DD, YYYY")}
+        {/* {props.film.watchDate} */}
       </td>
       <td>
         <Rating score={props.film.score} maxStar={5} />
