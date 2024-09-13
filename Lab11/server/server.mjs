@@ -7,8 +7,9 @@ import Film from './Film.mjs'
 import { check, param, validationResult } from 'express-validator';
 import FilmDao from './dao.mjs';
 import cors from 'cors';
+import passport from 'passport';
+import LocalStrategy from 'passport-local';
 
-dayjs.extend(utc)
 const app = express();
 const filmDao = new FilmDao();
 
@@ -17,6 +18,9 @@ const port = 3000
 app.use(morgan('common'))
 app.use(express.json())
 app.use(cors())
+
+// Passport configuration
+
 
 // This function is used to handle validation errors
 const onValidationErrors = (validationResult, res) => {
