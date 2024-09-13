@@ -2,8 +2,12 @@
 import { useState } from "react";
 import { Button, Container, Form } from "react-bootstrap";
 import { useNavigate, useParams } from "react-router-dom";
+import API from "../api/API";
+import Film from "../Film.mjs";
 
-function FilmForm({ films, addFilm, updateFilms, mode }) {
+const api = new API();
+
+function FilmForm({ films, setFilms, loadFilms, updateFilms, mode }) {
   const navigate = useNavigate();
   const params = useParams();
   const filmId = params.filmId;
@@ -23,13 +27,23 @@ function FilmForm({ films, addFilm, updateFilms, mode }) {
   const [score, setScore] = useState(editableFilm ? editableFilm.score : 0);
   const [userId, setUserId] = useState(editableFilm ? editableFilm.userId : 1);
 
-  const handleSubmit = (event) => {
+  const handleSubmit = async (event) => {
     event.preventDefault();
-    const film = { title, favorite, watchDate, score, userId };
+    const scoreInt = parseInt(score);
+    const userIdInt = parseInt(userId);
+    const film = new Film(1, title, favorite, watchDate, scoreInt, userIdInt);
     if (editableFilm) {
       updateFilms({ id: editableFilm.id, ...film });
     } else {
-      addFilm(film);
+      try {
+        // console.log("at handleSubmit in FilmForm.jsx film:", film);
+
+        await api.saveFilm(film);
+        await loadFilms();
+        navigate("..");
+      } catch (err) {
+        console.error(err);
+      }
     }
     navigate("..");
   };

@@ -34,7 +34,7 @@ content-type: application/json
     "favorite": true,
     "watchDate": null,
     "rating": 4,
-    "userId": 3
+    "userId": 1
 }
 ###
 

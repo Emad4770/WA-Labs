@@ -2,8 +2,10 @@
 import { Table, Row, Col, Button } from "react-bootstrap";
 import { useNavigate, useSearchParams } from "react-router-dom";
 // import dayjs from "dayjs";
+import API from "../api/API";
+const api = new API();
 
-function Films({ filters, ...props }) {
+function Films({ loadFilms, filters, ...props }) {
   const navigate = useNavigate();
   const [searchParam] = useSearchParams();
 
@@ -11,6 +13,16 @@ function Films({ filters, ...props }) {
 
   const handleEdit = (film) => {
     navigate(`/films/${film.id}/edit`);
+  };
+
+  const handleDelete = async (id) => {
+    // TODO: implement delete
+    try {
+      await api.deleteFilm(id);
+      await loadFilms();
+    } catch (err) {
+      console.error(err);
+    }
   };
 
   return !filters[selectedFilter] ? (
@@ -30,6 +42,7 @@ function Films({ filters, ...props }) {
             selectedFilter={selectedFilter}
             filters={filters}
             handleEdit={handleEdit}
+            handleDelete={handleDelete}
           />
         </Col>
       </Row>
@@ -64,6 +77,7 @@ function FilmTable(props) {
             key={film.id}
             deleteFilm={props.deleteFilm}
             handleEdit={props.handleEdit}
+            handleDelete={props.handleDelete}
           />
         ))}
       </tbody>
@@ -79,6 +93,7 @@ function FilmRow(props) {
         film={props.film}
         deleteFilm={props.deleteFilm}
         handleEdit={props.handleEdit}
+        handleDelete={props.handleDelete}
       />
     </tr>
   );
@@ -133,7 +148,7 @@ function FilmActions(props) {
       <td>
         <i
           className="bi bi-trash "
-          onClick={() => props.deleteFilm(props.film.id)}
+          onClick={() => props.handleDelete(props.film.id)}
         ></i>
       </td>
     </>
