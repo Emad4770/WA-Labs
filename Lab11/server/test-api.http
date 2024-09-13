@@ -171,4 +171,12 @@ content-type: application/json
     "rating": null,
     "userId": 1
 }
-###
+### login test
+
+POST http://localhost:3000/api/sessions HTTP/1.1
+content-type: application/json
+
+{
+    "username": "mario.rossi@polito.it",
+    "password": "passworsd"
+}

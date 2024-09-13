@@ -9,9 +9,12 @@ import FilmDao from './dao.mjs';
 import cors from 'cors';
 import passport from 'passport';
 import LocalStrategy from 'passport-local';
+import session from 'express-session';
+import UserDao from './user-dao.mjs';
 
 const app = express();
 const filmDao = new FilmDao();
+const userDao = new UserDao();
 
 const port = 3000
 
@@ -20,6 +23,39 @@ app.use(express.json())
 app.use(cors())
 
 // Passport configuration
+passport.use(new LocalStrategy(function verify(username, password, callback) {
+
+    userDao.getUser(username, password).then((user) => {
+        if (!user) {
+            return callback(null, false, 'Incorrect username and/or password.')
+        }
+        else {
+            return callback(null, user)
+
+        }
+    })
+}))
+
+// enable session in express
+app.use(session({
+    secret: 'thissssss is my secret!',
+    resave: false,
+    saveUninitialized: false,
+}))
+
+
+// init passport to use sessions
+app.use(passport.authenticate('session'))
+
+passport.serializeUser((user, cb) => {
+    cb(null, user)
+})
+
+passport.deserializeUser((user, cb) => {
+    return cb(null, user)
+})
+
+
 
 
 // This function is used to handle validation errors
@@ -40,6 +76,13 @@ const filmValidation = [
     check('score').optional({ nullable: true }).isInt({ min: 0, max: 5 })
     // check('userId').isInt()
 ]
+
+
+// login API
+
+app.post('/api/sessions', passport.authenticate('local'), (req, res) => {
+    res.json(req.user)
+})
 
 /*** Films APIs ***/
 // 1. Retrieve the list of all the available films.
