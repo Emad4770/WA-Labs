@@ -1,7 +1,7 @@
 import "bootstrap/dist/css/bootstrap.min.css";
 import "bootstrap-icons/font/bootstrap-icons.css";
 import "./App.css";
-import NavigationBar from "./components/Navigationbar";
+import NavigationBar from "./components/NavigationBar";
 import { Col, Container, Row } from "react-bootstrap";
 import SideBar from "./components/SideBar";
 import Film from "./Film.mjs";
@@ -25,24 +25,25 @@ function App() {
   const [films, setFilms] = useState([]);
   const [query, setQuery] = useState("");
 
-  useEffect(() => {
-    async function loadFilms() {
-      const loadedFilms = await api.loadFilms(query);
-      const filmList = loadedFilms.map(
-        (film) =>
-          new Film(
-            film.id,
-            film.title,
-            film.favorite,
-            film.watchDate,
-            film.score,
-            film.userId
-          )
-      );
+  // load films from the server and update the app state
+  async function loadFilms(query) {
+    const loadedFilms = await api.loadFilms(query);
+    const filmList = loadedFilms.map(
+      (film) =>
+        new Film(
+          film.id,
+          film.title,
+          film.favorite,
+          film.watchDate,
+          film.score,
+          film.userId
+        )
+    );
+    setFilms(filmList);
+  }
 
-      setFilms(filmList);
-    }
-    loadFilms();
+  useEffect(() => {
+    loadFilms(query);
   }, [query]);
 
   const deleteFilm = (id) => {
@@ -66,25 +67,6 @@ function App() {
     });
   };
 
-  const addFilm = (film) => {
-    setFilms((oldFilms) => {
-      const newId =
-        oldFilms.length > 0
-          ? Math.max(...oldFilms.map((film) => film.id)) + 1
-          : 1;
-      console.log("newId: " + newId);
-      const newFilm = new Film(
-        newId,
-        film.title,
-        film.favorite,
-        film.watchDate,
-        film.score,
-        film.userId
-      );
-      return [...oldFilms, newFilm];
-    });
-  };
-
   return (
     <>
       <NavigationBar />
@@ -101,10 +83,10 @@ function App() {
                 <Col className="col-8">
                   <FilmComponents
                     films={films}
-                    addFilm={addFilm}
                     deleteFilm={deleteFilm}
                     updateFilms={updateFilms}
                     filters={filters}
+                    loadFilms={loadFilms}
                   />
                 </Col>
               </Row>
@@ -114,12 +96,12 @@ function App() {
 
         <Route
           path="/films/add"
-          element={<FilmForm addFilm={addFilm} mode={"add"} />}
+          element={<FilmForm mode={"add"} loadFilms={loadFilms} />}
         />
         <Route
           path="/films/:filmId/edit"
           element={
-            <FilmForm films={films} updateFilms={updateFilms} mode={"edit"} />
+            <FilmForm films={films} loadFilms={loadFilms} mode={"edit"} />
           }
         />
 

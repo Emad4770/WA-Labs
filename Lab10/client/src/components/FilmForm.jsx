@@ -2,15 +2,18 @@
 import { useState } from "react";
 import { Button, Container, Form } from "react-bootstrap";
 import { useNavigate, useParams } from "react-router-dom";
+import API from "../api/API";
 
-function FilmForm({ films, addFilm, updateFilms, mode }) {
+const api = new API();
+
+function FilmForm({ films, loadFilms, mode }) {
   const navigate = useNavigate();
   const params = useParams();
   const filmId = params.filmId;
 
   const editableFilm =
     films && films.find((film) => film.id === parseInt(filmId));
-
+  // console.log("at FilmForm.jsx editableFilm:", editableFilm);
   const [title, setTitle] = useState(editableFilm ? editableFilm.title : "");
   const [favorite, setFavorite] = useState(
     editableFilm ? editableFilm.favorite : false
@@ -20,16 +23,40 @@ function FilmForm({ films, addFilm, updateFilms, mode }) {
       ? editableFilm.watchDate.format("YYYY-MM-DD")
       : ""
   );
-  const [score, setScore] = useState(editableFilm ? editableFilm.score : 0);
+  const [score, setScore] = useState(
+    editableFilm && editableFilm.score ? editableFilm.score : 0
+  );
   const [userId, setUserId] = useState(editableFilm ? editableFilm.userId : 1);
 
-  const handleSubmit = (event) => {
+  const handleSubmit = async (event) => {
     event.preventDefault();
-    const film = { title, favorite, watchDate, score, userId };
+    const scoreInt = parseInt(score);
+    const userIdInt = parseInt(userId);
+    // const film = new Film(1, title, favorite, watchDate, scoreInt, userIdInt);
+    const film = {
+      title,
+      favorite,
+      watchDate,
+      score: scoreInt,
+      userId: userIdInt,
+    };
     if (editableFilm) {
-      updateFilms({ id: editableFilm.id, ...film });
+      try {
+        await api.updateFilm({ id: editableFilm.id, ...film });
+        await loadFilms();
+        navigate("..");
+      } catch (err) {
+        console.error(err);
+      }
     } else {
-      addFilm(film);
+      try {
+        // console.log("at handleSubmit in FilmForm.jsx film:", film);
+        await api.saveFilm(film);
+        await loadFilms();
+        navigate("..");
+      } catch (err) {
+        console.error(err);
+      }
     }
     navigate("..");
   };
