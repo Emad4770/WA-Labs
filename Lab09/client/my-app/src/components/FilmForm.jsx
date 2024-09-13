@@ -3,7 +3,6 @@ import { useState } from "react";
 import { Button, Container, Form } from "react-bootstrap";
 import { useNavigate, useParams } from "react-router-dom";
 import API from "../api/API";
-import Film from "../Film.mjs";
 
 const api = new API();
 
