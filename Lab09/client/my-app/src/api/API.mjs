@@ -30,18 +30,6 @@ export default class API {
     };
 
     async saveFilm(film) {
-
-        // console.log(film)
-        const body = JSON.stringify({
-            title: film.title,
-            favorite: film.favorite,
-            watchDate: film.watchDate,
-            score: film.score,
-            userId: 1
-        })
-        console.log(body);
-
-
         try {
             const response = await fetch(`${URL}films`, {
                 method: "POST",
@@ -66,6 +54,35 @@ export default class API {
             console.log(newFilm);
 
             return newFilm;
+        } catch (err) {
+            console.error(err)
+        }
+    }
+
+    async updateFilm(film) {
+        try {
+            const response = await fetch(`${URL}films/${film.id}`, {
+                method: "PUT",
+                headers: myHeaders,
+                body: JSON.stringify({
+                    title: film.title,
+                    favorite: film.favorite,
+                    watchDate: film.watchDate ? film.watchDate : null,
+                    rating: film.score,
+                    userId: 1
+                })
+            })
+
+            if (!response.ok) {
+                throw Error(response.statusText)
+            }
+            let type = response.headers.get('content-type').split(';')[0].trim();
+            if (type !== 'application/json') {
+                throw new TypeError(`Expected JSON, got ${type}`);
+            }
+            const updatedFilm = await response.json();
+
+            return updatedFilm;
         } catch (err) {
             console.error(err)
         }

@@ -67,25 +67,6 @@ function App() {
     });
   };
 
-  const addFilm = (film) => {
-    setFilms((oldFilms) => {
-      const newId =
-        oldFilms.length > 0
-          ? Math.max(...oldFilms.map((film) => film.id)) + 1
-          : 1;
-      console.log("newId: " + newId);
-      const newFilm = new Film(
-        newId,
-        film.title,
-        film.favorite,
-        film.watchDate,
-        film.score,
-        film.userId
-      );
-      return [...oldFilms, newFilm];
-    });
-  };
-
   return (
     <>
       <NavigationBar />
@@ -102,7 +83,6 @@ function App() {
                 <Col className="col-8">
                   <FilmComponents
                     films={films}
-                    addFilm={addFilm}
                     deleteFilm={deleteFilm}
                     updateFilms={updateFilms}
                     filters={filters}
@@ -116,14 +96,12 @@ function App() {
 
         <Route
           path="/films/add"
-          element={
-            <FilmForm addFilm={addFilm} mode={"add"} loadFilms={loadFilms} />
-          }
+          element={<FilmForm mode={"add"} loadFilms={loadFilms} />}
         />
         <Route
           path="/films/:filmId/edit"
           element={
-            <FilmForm films={films} updateFilms={updateFilms} mode={"edit"} />
+            <FilmForm films={films} loadFilms={loadFilms} mode={"edit"} />
           }
         />
 
